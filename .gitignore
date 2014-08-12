@@ -11,7 +11,7 @@ build
 target
 .springBeans
 tmp*
-spring
+initializr-service/spring
 grapes
 spring.zip
 repository/
