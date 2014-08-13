@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration
  * @author Stephane Nicoll
  */
 @Configuration
-@EnableConfigurationProperties(ProjectMetadata.class)
+@EnableConfigurationProperties(InitializrMetadata.class)
 class InitializrAutoConfiguration {
 
 	@Bean

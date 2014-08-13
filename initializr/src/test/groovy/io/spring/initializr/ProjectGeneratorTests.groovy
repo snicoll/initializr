@@ -15,9 +15,9 @@ class ProjectGeneratorTests {
 
 	@Before
 	void setup() {
-		ProjectMetadata projectMetadata = ProjectMetadataBuilder.withDefaults()
+		InitializrMetadata metadata = ProjectMetadataBuilder.withDefaults()
 				.addDependencyGroup('test', 'web', 'security', 'data-jpa', 'aop', 'batch', 'integration') .get()
-		projectGenerator.projectMetadata = projectMetadata
+		projectGenerator.metadata = metadata
 	}
 
 	@Test

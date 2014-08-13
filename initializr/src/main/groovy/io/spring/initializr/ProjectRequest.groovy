@@ -40,9 +40,9 @@ class ProjectRequest {
 	}
 
 	/**
-	 * Resolve this instance against the specified {@link ProjectMetadata}
+	 * Resolve this instance against the specified {@link InitializrMetadata}
 	 */
-	List<ProjectMetadata.Dependency> resolveDependencies(ProjectMetadata projectMetadata) {
+	List<InitializrMetadata.Dependency> resolveDependencies(InitializrMetadata projectMetadata) {
 		if (style == null || style.size() == 0) {
 			style = []
 		}
@@ -50,10 +50,10 @@ class ProjectRequest {
 			style = [style]
 		}
 		style.collect {
-			ProjectMetadata.Dependency dependency = projectMetadata.getDependency(it);
+			InitializrMetadata.Dependency dependency = projectMetadata.getDependency(it);
 			if (dependency == null) {
 				logger.warn("No known dependency for style "+it+" assuming spring-boot-starter")
-				dependency =  new ProjectMetadata.Dependency()
+				dependency =  new InitializrMetadata.Dependency()
 				dependency.asSpringBootStarter(it)
 			}
 			dependency

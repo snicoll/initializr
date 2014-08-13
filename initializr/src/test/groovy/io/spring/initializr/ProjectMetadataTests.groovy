@@ -14,13 +14,13 @@ class ProjectMetadataTests {
 	@Rule
 	public final ExpectedException thrown = ExpectedException.none()
 
-	private final ProjectMetadata projectMetadata = new ProjectMetadata()
+	private final InitializrMetadata metadata = new InitializrMetadata()
 
 	@Test
 	public void setCoordinatesFromId() {
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'org.foo:bar:1.2.3'
-		projectMetadata.validateDependency(dependency)
+		metadata.validateDependency(dependency)
 		assertEquals 'org.foo', dependency.groupId
 		assertEquals 'bar', dependency.artifactId
 		assertEquals '1.2.3', dependency.version
@@ -29,9 +29,9 @@ class ProjectMetadataTests {
 
 	@Test
 	public void setCoordinatesFromIdNoVersion() {
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'org.foo:bar'
-		projectMetadata.validateDependency(dependency)
+		metadata.validateDependency(dependency)
 		assertEquals 'org.foo', dependency.groupId
 		assertEquals 'bar', dependency.artifactId
 		assertNull dependency.version
@@ -40,29 +40,29 @@ class ProjectMetadataTests {
 
 	@Test
 	public void setIdFromCoordinates() {
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.groupId = 'org.foo'
 		dependency.artifactId = 'bar'
 		dependency.version = '1.0'
-		projectMetadata.validateDependency(dependency)
+		metadata.validateDependency(dependency)
 		assertEquals 'org.foo:bar:1.0', dependency.id
 	}
 
 	@Test
 	public void setIdFromCoordinatesNoVersion() {
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.groupId = 'org.foo'
 		dependency.artifactId = 'bar'
-		projectMetadata.validateDependency(dependency)
+		metadata.validateDependency(dependency)
 		assertEquals 'org.foo:bar', dependency.id
 	}
 
 	@Test
 	public void setIdFromSimpleName() {
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'web'
 
-		projectMetadata.validateDependency(dependency)
+		metadata.validateDependency(dependency)
 		assertEquals 'org.springframework.boot', dependency.groupId
 		assertEquals 'spring-boot-starter-web', dependency.artifactId
 		assertNull dependency.version
@@ -71,28 +71,28 @@ class ProjectMetadataTests {
 
 	@Test
 	public void invalidDependency() {
-		thrown.expect(InvalidProjectMetadataException.class)
-		projectMetadata.validateDependency(new ProjectMetadata.Dependency())
+		thrown.expect(InvalidInitializrMetadataException.class)
+		metadata.validateDependency(new InitializrMetadata.Dependency())
 	}
 
 	@Test
 	public void invalidIdFormatTooManyColons() {
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'org.foo:bar:1.0:test:external'
 
-		thrown.expect(InvalidProjectMetadataException.class)
-		projectMetadata.validateDependency(dependency)
+		thrown.expect(InvalidInitializrMetadataException.class)
+		metadata.validateDependency(dependency)
 	}
 
 	@Test
 	public void indexedDependencies() {
-		ProjectMetadata metadata = new ProjectMetadata()
-		ProjectMetadata.DependencyGroup group = new ProjectMetadata.DependencyGroup()
+		InitializrMetadata metadata = new InitializrMetadata()
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
 
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'first'
 		group.content.add(dependency)
-		ProjectMetadata.Dependency dependency2 = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency2 = new InitializrMetadata.Dependency()
 		dependency2.id = 'second'
 		group.content.add(dependency2)
 
@@ -107,13 +107,13 @@ class ProjectMetadataTests {
 
 	@Test
 	public void addTwoDependenciesWithSameId() {
-		ProjectMetadata metadata = new ProjectMetadata()
-		ProjectMetadata.DependencyGroup group = new ProjectMetadata.DependencyGroup()
+		InitializrMetadata metadata = new InitializrMetadata()
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
 
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'conflict'
 		group.content.add(dependency)
-		ProjectMetadata.Dependency dependency2 = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency2 = new InitializrMetadata.Dependency()
 		dependency2.id = 'conflict'
 		group.content.add(dependency2)
 
@@ -126,10 +126,10 @@ class ProjectMetadataTests {
 
 	@Test
 	public void addDependencyWithAliases() {
-		ProjectMetadata metadata = new ProjectMetadata()
-		ProjectMetadata.DependencyGroup group = new ProjectMetadata.DependencyGroup()
+		InitializrMetadata metadata = new InitializrMetadata()
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
 
-		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 		dependency.id = 'first'
 		dependency.aliases.add('alias1')
 		dependency.aliases.add('alias2')

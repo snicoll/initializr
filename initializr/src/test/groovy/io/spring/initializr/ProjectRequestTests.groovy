@@ -14,12 +14,12 @@ class ProjectRequestTests {
 	@Test
 	public void resolve() {
 		ProjectRequest request = new ProjectRequest()
-		ProjectMetadata metadata = ProjectMetadataBuilder.withDefaults()
+		InitializrMetadata metadata = ProjectMetadataBuilder.withDefaults()
 				.addDependencyGroup('code', 'web', 'security', 'spring-data').get()
 
 		request.style.add('web')
 		request.style.add('spring-data')
-		List<ProjectMetadata.Dependency> dependencies = request.resolveDependencies(metadata)
+		List<InitializrMetadata.Dependency> dependencies = request.resolveDependencies(metadata)
 		assertBootStarter(dependencies.get(0), 'web')
 		assertBootStarter(dependencies.get(1), 'spring-data')
 	}
@@ -27,23 +27,23 @@ class ProjectRequestTests {
 	@Test
 	public void resolveUnknownStyle() {
 		ProjectRequest request = new ProjectRequest()
-		ProjectMetadata metadata = ProjectMetadataBuilder.withDefaults()
+		InitializrMetadata metadata = ProjectMetadataBuilder.withDefaults()
 				.addDependencyGroup('code', 'org.foo:bar:1.0').get()
 
 		request.style.add('org.foo:bar:1.0')
 		request.style.add('foo-bar')
-		List<ProjectMetadata.Dependency> dependencies = request.resolveDependencies(metadata)
+		List<InitializrMetadata.Dependency> dependencies = request.resolveDependencies(metadata)
 		assertDependency(dependencies.get(0), 'org.foo', 'bar', '1.0')
 		assertBootStarter(dependencies.get(1), 'foo-bar')
 	}
 
-	private static void assertBootStarter(ProjectMetadata.Dependency actual, String name) {
-		ProjectMetadata.Dependency expected = new ProjectMetadata.Dependency()
+	private static void assertBootStarter(InitializrMetadata.Dependency actual, String name) {
+		InitializrMetadata.Dependency expected = new InitializrMetadata.Dependency()
 		expected.asSpringBootStarter(name)
 		assertDependency(actual, expected.groupId, expected.artifactId, expected.version)
 	}
 
-	private static void assertDependency(ProjectMetadata.Dependency actual, String groupId,
+	private static void assertDependency(InitializrMetadata.Dependency actual, String groupId,
 										 String artifactId, String version) {
 		assertEquals groupId, actual.groupId
 		assertEquals artifactId, actual.artifactId

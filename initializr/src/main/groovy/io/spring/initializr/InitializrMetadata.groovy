@@ -11,8 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 /**
  * @author Stephane Nicoll
  */
-@ConfigurationProperties(prefix = 'projects', ignoreUnknownFields = false)
-class ProjectMetadata {
+@ConfigurationProperties(prefix = 'initializr', ignoreUnknownFields = false)
+class InitializrMetadata {
 
 	final List<DependencyGroup> dependencies = new ArrayList<DependencyGroup>()
 
@@ -66,7 +66,7 @@ class ProjectMetadata {
 		String id = dependency.getId()
 		if (id == null) {
 			if (!dependency.hasCoordinates()) {
-				throw new InvalidProjectMetadataException('Invalid dependency, ' +
+				throw new InvalidInitializrMetadataException('Invalid dependency, ' +
 						'should have at least an id or a groupId/artifactId pair.')
 			}
 			StringBuilder sb = new StringBuilder()
@@ -87,7 +87,7 @@ class ProjectMetadata {
 					dependency.setVersion(st.nextToken())
 				}
 			} else {
-				throw new InvalidProjectMetadataException('Invalid dependency, id should ' +
+				throw new InvalidInitializrMetadataException('Invalid dependency, id should ' +
 						'have the form groupId:artifactId[:version] but got ' + id)
 			}
 		}

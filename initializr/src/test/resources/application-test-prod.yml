@@ -6,7 +6,7 @@ info:
   spring-boot:
     version: 1.1.4.RELEASE
 
-projects:
+initializr:
   dependencies:
     - name: Core
       description: The core dependencies

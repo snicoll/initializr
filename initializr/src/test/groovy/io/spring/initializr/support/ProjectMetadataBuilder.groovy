@@ -1,6 +1,6 @@
 package io.spring.initializr.support
 
-import io.spring.initializr.ProjectMetadata
+import io.spring.initializr.InitializrMetadata
 
 /**
  *
@@ -8,27 +8,27 @@ import io.spring.initializr.ProjectMetadata
  */
 class ProjectMetadataBuilder {
 
-	private final ProjectMetadata projectMetadata = new ProjectMetadata()
+	private final InitializrMetadata metadata = new InitializrMetadata()
 
 
 	static ProjectMetadataBuilder withDefaults() {
 		new ProjectMetadataBuilder().addDefaults()
 	}
 
-	ProjectMetadata get() {
-		projectMetadata.validate()
-		projectMetadata
+	InitializrMetadata get() {
+		metadata.validate()
+		metadata
 	}
 
 	ProjectMetadataBuilder addDependencyGroup(String name, String... ids) {
-		ProjectMetadata.DependencyGroup group = new ProjectMetadata.DependencyGroup()
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
 		group.name = name
 		for (String id : ids) {
-			ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+			InitializrMetadata.Dependency dependency = new InitializrMetadata.Dependency()
 			dependency.id = id
 			group.content.add(dependency)
 		}
-		projectMetadata.dependencies.add(group)
+		metadata.dependencies.add(group)
 		this
 	}
 
@@ -43,12 +43,12 @@ class ProjectMetadataBuilder {
 	}
 
 	ProjectMetadataBuilder addType(String id, boolean defaultValue, String action) {
-		ProjectMetadata.Type type = new ProjectMetadata.Type();
+		InitializrMetadata.Type type = new InitializrMetadata.Type();
 		type.id = id
 		type.name = id
 		type.default = defaultValue
 		type.action = action
-		projectMetadata.types.add(type)
+		metadata.types.add(type)
 		this
 	}
 
@@ -57,11 +57,11 @@ class ProjectMetadataBuilder {
 	}
 
 	ProjectMetadataBuilder addPackaging(String id, boolean defaultValue) {
-		ProjectMetadata.Packaging packaging = new ProjectMetadata.Packaging();
+		InitializrMetadata.Packaging packaging = new InitializrMetadata.Packaging();
 		packaging.id = id
 		packaging.name = id
 		packaging.default = defaultValue
-		projectMetadata.packagings.add(packaging)
+		metadata.packagings.add(packaging)
 		this
 	}
 
@@ -70,11 +70,11 @@ class ProjectMetadataBuilder {
 	}
 
 	ProjectMetadataBuilder addJavaVersion(String version, boolean defaultValue) {
-		ProjectMetadata.JavaVersion javaVersion = new ProjectMetadata.JavaVersion();
+		InitializrMetadata.JavaVersion javaVersion = new InitializrMetadata.JavaVersion();
 		javaVersion.id = version
 		javaVersion.name = version
 		javaVersion.default = defaultValue
-		projectMetadata.javaVersions.add(javaVersion)
+		metadata.javaVersions.add(javaVersion)
 		this
 	}
 
@@ -83,11 +83,11 @@ class ProjectMetadataBuilder {
 	}
 
 	ProjectMetadataBuilder addLanguage(String id, boolean defaultValue) {
-		ProjectMetadata.Language language = new ProjectMetadata.Language();
+		InitializrMetadata.Language language = new InitializrMetadata.Language();
 		language.id = id
 		language.name = id
 		language.default = defaultValue
-		projectMetadata.languages.add(language)
+		metadata.languages.add(language)
 		this
 	}
 
@@ -97,11 +97,11 @@ class ProjectMetadataBuilder {
 	}
 
 	ProjectMetadataBuilder addBootVersion(String id, boolean defaultValue) {
-		ProjectMetadata.BootVersion bootVersion = new ProjectMetadata.BootVersion();
+		InitializrMetadata.BootVersion bootVersion = new InitializrMetadata.BootVersion();
 		bootVersion.id = id
 		bootVersion.name = id
 		bootVersion.default = defaultValue
-		projectMetadata.bootVersions.add(bootVersion)
+		metadata.bootVersions.add(bootVersion)
 		this
 	}
 

@@ -1,7 +1,7 @@
 package io.spring.initializr.web
 
 import io.spring.initializr.ProjectGenerator
-import io.spring.initializr.ProjectMetadata
+import io.spring.initializr.InitializrMetadata
 import io.spring.initializr.ProjectRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,7 +32,7 @@ class MainController {
 	private String bootVersion
 
 	@Autowired
-	private ProjectMetadata projects
+	private InitializrMetadata metadata
 
 	@Autowired
 	private ProjectGenerator projectGenerator
@@ -46,15 +46,15 @@ class MainController {
 
 	@RequestMapping(value = "/")
 	@ResponseBody
-	ProjectMetadata projects() {
-		projects
+	InitializrMetadata metadata() {
+		metadata
 	}
 
 	@RequestMapping(value = '/', produces = 'text/html')
 	@ResponseBody
 	String home() {
 		def model = [:]
-		projects.properties.each { model[it.key] = it.value }
+		metadata.properties.each { model[it.key] = it.value }
 		template 'home.html', model
 	}
 

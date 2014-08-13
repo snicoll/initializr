@@ -17,7 +17,7 @@ import static io.spring.initializr.support.GroovyTemplate.template
 class ProjectGenerator {
 
 	@Autowired
-	ProjectMetadata projectMetadata
+	InitializrMetadata metadata
 
 	@Value('${TMPDIR:.}')
 	String tmpdir
@@ -129,7 +129,7 @@ class ProjectGenerator {
 			request.style << 'web'
 		}
 		request.properties.each { model[it.key] = it.value }
-		model.dependencies = request.resolveDependencies(projectMetadata)
+		model.dependencies = request.resolveDependencies(metadata)
 		model
 	}
 
