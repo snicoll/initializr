@@ -84,6 +84,7 @@ class ProjectMetadataTests {
 		projectMetadata.validateDependency(dependency)
 	}
 
+	@Test
 	public void indexedDependencies() {
 		ProjectMetadata metadata = new ProjectMetadata()
 		ProjectMetadata.DependencyGroup group = new ProjectMetadata.DependencyGroup()
@@ -122,4 +123,24 @@ class ProjectMetadataTests {
 		thrown.expectMessage('conflict')
 		metadata.validate()
 	}
+
+	@Test
+	public void addDependencyWithAliases() {
+		ProjectMetadata metadata = new ProjectMetadata()
+		ProjectMetadata.DependencyGroup group = new ProjectMetadata.DependencyGroup()
+
+		ProjectMetadata.Dependency dependency = new ProjectMetadata.Dependency()
+		dependency.id = 'first'
+		dependency.aliases.add('alias1')
+		dependency.aliases.add('alias2')
+		group.content.add(dependency)
+		metadata.dependencies.add(group)
+
+		metadata.validate()
+
+		assertSame dependency, metadata.getDependency('first')
+		assertSame dependency, metadata.getDependency('alias1')
+		assertSame dependency, metadata.getDependency('alias2')
+	}
+
 }

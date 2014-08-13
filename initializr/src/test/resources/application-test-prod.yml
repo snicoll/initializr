@@ -24,6 +24,8 @@ projects:
           description: JDBC Database support.
         - name: JPA
           id: data-jpa
+          aliases:
+            - jpa
         - name: MongoDB
           id: data-mongodb
         - name: Redis

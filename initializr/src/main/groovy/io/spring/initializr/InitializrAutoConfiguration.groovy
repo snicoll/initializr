@@ -19,4 +19,10 @@ class InitializrAutoConfiguration {
 	MainController initializrMainController() {
 		new MainController()
 	}
+
+	@Bean
+	@ConditionalOnMissingBean(ProjectGenerator.class)
+	ProjectGenerator projectGenerator() {
+		new ProjectGenerator()
+	}
 }

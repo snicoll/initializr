@@ -11,6 +11,10 @@ projects:
         - name: Web
           id: web
           description: Necessary infrastructure to build a REST service
+        - name: Security
+          id: security
+        - name: Data JPA
+          id: data-jpa
     - name: Other
       content:
         - name: Foo

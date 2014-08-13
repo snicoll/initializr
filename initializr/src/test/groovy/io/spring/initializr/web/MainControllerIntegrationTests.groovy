@@ -1,10 +1,11 @@
 package io.spring.initializr.web
 
-import io.spring.initializr.TestApp
+import io.spring.initializr.support.PomAssert
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.http.*
@@ -19,9 +20,9 @@ import static org.junit.Assert.*
  * @author Stephane Nicoll
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestApp.class)
+@SpringApplicationConfiguration(classes = Config.class)
 @WebAppConfiguration
-@ActiveProfiles('test-dummy')
+@ActiveProfiles('test-default')
 @IntegrationTest('server.port=0')
 class MainControllerIntegrationTests {
 
@@ -46,7 +47,7 @@ class MainControllerIntegrationTests {
 		JsonAssert coreGroupAssert = dependenciesAssert.getElement(0)
 		coreGroupAssert.assertField('name', 'Core')
 		coreGroupAssert.assertField('description', 'The core dependencies')
-		coreGroupAssert.assertRootSize('content', 1)
+		coreGroupAssert.assertRootSize('content', 3)
 		JsonAssert webDependency = coreGroupAssert.getChild('content').getElement(0)
 		assertDependency(webDependency, 'web',
 				'Web', 'Necessary infrastructure to build a REST service')
@@ -66,6 +67,15 @@ class MainControllerIntegrationTests {
 		rootAssert.assertRootSize('languages', 2)
 		rootAssert.assertRootSize('bootVersions', 3)
 	}
+
+	@Test
+	void generateDefaultPom() {
+		String content = restTemplate.getForObject(createUrl('/pom.xml?style=web'), String)
+		PomAssert pomAssert = new PomAssert(content)
+		pomAssert.hasGroupId('org.test').hasArtifactId('demo')
+	}
+
+	// Existing tests for backward compatibility
 
 	@Test
 	void homeIsForm() {
@@ -140,5 +150,10 @@ class MainControllerIntegrationTests {
 
 	private String createUrl(String context) {
 		return 'http://localhost:' + port + context
+	}
+
+	@EnableAutoConfiguration
+	static class Config {
+
 	}
 }

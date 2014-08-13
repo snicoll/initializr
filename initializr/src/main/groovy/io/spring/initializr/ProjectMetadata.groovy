@@ -45,15 +45,21 @@ class ProjectMetadata {
 		for (DependencyGroup group : dependencies) {
 			for (Dependency dependency : group.getContent()) {
 				validateDependency(dependency)
-
-				Dependency existing = indexedDependencies.get(dependency.id)
-				if (existing != null) {
-					throw new IllegalArgumentException('Could not register ' + dependency +
-							': another dependency has also the "'+dependency.id+  '" id ' + existing)
+				indexDependency(dependency.id, dependency)
+				for (String alias : dependency.aliases) {
+					indexDependency(alias, dependency)
 				}
-				indexedDependencies.put(dependency.id, dependency)
 			}
 		}
+	}
+
+	private void indexDependency(String id, Dependency dependency) {
+		Dependency existing = indexedDependencies.get(id)
+		if (existing != null) {
+			throw new IllegalArgumentException('Could not register ' + dependency +
+					': another dependency has also the "' + id + '" id ' + existing)
+		}
+		indexedDependencies.put(id, dependency)
 	}
 
 	static void validateDependency(Dependency dependency) {
@@ -73,8 +79,7 @@ class ProjectMetadata {
 			// Let's build the coordinates from the id
 			StringTokenizer st = new StringTokenizer(id, ':')
 			if (st.countTokens() == 1) { // assume spring-boot-starter
-				dependency.groupId = 'org.springframework.boot'
-				dependency.artifactId = 'spring-boot-starter-' + id
+				dependency.asSpringBootStarter(id)
 			} else if (st.countTokens() == 2 || st.countTokens() == 3) {
 				dependency.setGroupId(st.nextToken())
 				dependency.setArtifactId(st.nextToken())
@@ -103,7 +108,10 @@ class ProjectMetadata {
 	static class Dependency extends IdentifiableElement {
 
 		@JsonIgnore
-		def String groupId
+		List<String> aliases = []
+
+		@JsonIgnore
+		String groupId
 
 		@JsonIgnore
 		String artifactId
@@ -117,6 +125,14 @@ class ProjectMetadata {
 		 */
 		boolean hasCoordinates() {
 			return groupId != null && artifactId != null
+		}
+
+		/**
+		 * Define this dependency as a standard spring boot starter with the specified name
+		 */
+		def asSpringBootStarter(String name) {
+			groupId = 'org.springframework.boot'
+			artifactId = 'spring-boot-starter-' + name
 		}
 	}
 
