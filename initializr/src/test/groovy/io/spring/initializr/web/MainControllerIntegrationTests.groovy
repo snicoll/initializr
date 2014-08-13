@@ -2,41 +2,23 @@ package io.spring.initializr.web
 
 import java.nio.charset.Charset
 
-import io.spring.initializr.support.PomAssert
 import org.json.JSONObject
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
 
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.IntegrationTest
-import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.util.StreamUtils
-import org.springframework.web.client.RestTemplate
 
 import static org.junit.Assert.*
 
 /**
  * @author Stephane Nicoll
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Config.class)
-@WebAppConfiguration
 @ActiveProfiles('test-default')
-@IntegrationTest('server.port=0')
-class MainControllerIntegrationTests {
-
-	@Value('${local.server.port}')
-	private int port
-
-	private final RestTemplate restTemplate = new RestTemplate()
+class MainControllerIntegrationTests extends AbstractMainControllerIntegrationTests {
 
 	@Test
 	// Test that the current output is exactly what we expect
@@ -52,15 +34,6 @@ class MainControllerIntegrationTests {
 		String json = restTemplate.getForObject(createUrl('/'), String.class)
 		JSONObject expected = readJson('1.0')
 		JSONAssert.assertEquals(expected, new JSONObject(json), JSONCompareMode.LENIENT)
-	}
-
-
-	@Test
-	void generateDefaultPom() { // see defaults customization
-		String content = restTemplate.getForObject(createUrl('/pom.xml?style=web'), String)
-		PomAssert pomAssert = new PomAssert(content)
-		pomAssert.hasGroupId('org.foo').hasArtifactId('foo-bar').hasVersion('1.2.4-SNAPSHOT')
-				.hasName('FooBar').hasDescription('FooBar Project').hasStartClass('org.foo.demo.Application')
 	}
 
 	// Existing tests for backward compatibility
@@ -125,9 +98,6 @@ class MainControllerIntegrationTests {
 		restTemplate.exchange(createUrl('/'), HttpMethod.GET, new HttpEntity<Void>(headers), String).body
 	}
 
-	private String createUrl(String context) {
-		return 'http://localhost:' + port + context
-	}
 
 	private static JSONObject readJson(String version) {
 		def resource = new ClassPathResource('metadata/test-default-' + version + '.json')
@@ -138,11 +108,5 @@ class MainControllerIntegrationTests {
 		} finally {
 			stream.close()
 		}
-	}
-
-
-	@EnableAutoConfiguration
-	static class Config {
-
 	}
 }

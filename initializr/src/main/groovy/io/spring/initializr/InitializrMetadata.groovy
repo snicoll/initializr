@@ -39,7 +39,7 @@ class InitializrMetadata {
 		return indexedDependencies.get(id)
 	}
 
-	ProjectRequest  createProjectRequest() {
+	ProjectRequest createProjectRequest() {
 		ProjectRequest request = new ProjectRequest();
 		defaults.properties.each { key, value ->
 			if (request.hasProperty(key) && !(key in ['class', 'metaClass'])) {
@@ -86,12 +86,7 @@ class InitializrMetadata {
 				throw new InvalidInitializrMetadataException('Invalid dependency, ' +
 						'should have at least an id or a groupId/artifactId pair.')
 			}
-			StringBuilder sb = new StringBuilder()
-			sb.append(dependency.getGroupId()).append(':').append(dependency.getArtifactId())
-			if (dependency.getVersion() != null) {
-				sb.append(':').append(dependency.getVersion())
-			}
-			dependency.setId(sb.toString())
+			dependency.generateId()
 		} else if (!dependency.hasCoordinates()) {
 			// Let's build the coordinates from the id
 			StringTokenizer st = new StringTokenizer(id, ':')
@@ -159,6 +154,19 @@ class InitializrMetadata {
 		def asSpringBootStarter(String name) {
 			groupId = 'org.springframework.boot'
 			artifactId = 'spring-boot-starter-' + name
+		}
+
+		def generateId() {
+			if (groupId == null || artifactId == null) {
+				throw new IllegalArgumentException('Could not generate id for ' + this
+						+ ': at least groupId and artifactId must be set.')
+			}
+			StringBuilder sb = new StringBuilder()
+			sb.append(groupId).append(':').append(artifactId)
+			if (version != null) {
+				sb.append(':').append(version)
+			}
+			id = sb.toString()
 		}
 	}
 
