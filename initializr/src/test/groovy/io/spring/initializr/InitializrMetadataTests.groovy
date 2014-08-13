@@ -1,5 +1,6 @@
 package io.spring.initializr
 
+import io.spring.initializr.support.InitializrMetadataBuilder
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -9,7 +10,7 @@ import static org.junit.Assert.*
 /**
  * @author Stephane Nicoll
  */
-class ProjectMetadataTests {
+class InitializrMetadataTests {
 
 	@Rule
 	public final ExpectedException thrown = ExpectedException.none()
@@ -141,6 +142,13 @@ class ProjectMetadataTests {
 		assertSame dependency, metadata.getDependency('first')
 		assertSame dependency, metadata.getDependency('alias1')
 		assertSame dependency, metadata.getDependency('alias2')
+	}
+
+	@Test
+	public void createProjectRequest() {
+		InitializrMetadata metadata = InitializrMetadataBuilder.withDefaults().get()
+		ProjectRequest request = metadata.createProjectRequest()
+		assertEquals metadata.defaults.groupId, request.groupId
 	}
 
 }

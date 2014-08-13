@@ -37,7 +37,7 @@ class MainControllerIntegrationTests {
 		JsonAssert rootAssert = new JsonAssert(json)
 
 		rootAssert.hasNoField('indexedDependencies')
-		rootAssert.assertSize(6)
+		rootAssert.assertSize(7)
 
 		rootAssert.assertRootSize('dependencies', 2)
 		JsonAssert dependenciesAssert = rootAssert.getChild('dependencies')
@@ -69,10 +69,11 @@ class MainControllerIntegrationTests {
 	}
 
 	@Test
-	void generateDefaultPom() {
+	void generateDefaultPom() { // see defaults customization
 		String content = restTemplate.getForObject(createUrl('/pom.xml?style=web'), String)
 		PomAssert pomAssert = new PomAssert(content)
-		pomAssert.hasGroupId('org.test').hasArtifactId('demo')
+		pomAssert.hasGroupId('org.foo').hasArtifactId('foo-bar').hasVersion('1.2.4-SNAPSHOT')
+				.hasName('FooBar').hasDescription('FooBar Project').hasStartClass('org.foo.demo.Application')
 	}
 
 	// Existing tests for backward compatibility

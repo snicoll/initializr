@@ -26,6 +26,8 @@ class InitializrMetadata {
 
 	final List<BootVersion> bootVersions = new ArrayList<BootVersion>()
 
+	final Defaults defaults = new Defaults();
+
 	@JsonIgnore
 	final Map<String, Dependency> indexedDependencies = new HashMap<String, Dependency>()
 
@@ -35,6 +37,21 @@ class InitializrMetadata {
 	 */
 	Dependency getDependency(String id) {
 		return indexedDependencies.get(id)
+	}
+
+	ProjectRequest  createProjectRequest() {
+		ProjectRequest request = new ProjectRequest();
+		defaults.properties.each { key, value ->
+			if (request.hasProperty(key) && !(key in ['class', 'metaClass'])) {
+				request[key] = value
+			}
+		}
+		request.type = getDefault(types, request.type)
+		request.packaging = getDefault(packagings, request.packaging)
+		request.javaVersion = getDefault(javaVersions, request.javaVersion)
+		request.language = getDefault(languages, request.language)
+		request.bootVersion = getDefault(bootVersions, request.bootVersion)
+		request
 	}
 
 	/**
@@ -91,6 +108,15 @@ class InitializrMetadata {
 						'have the form groupId:artifactId[:version] but got ' + id)
 			}
 		}
+	}
+
+	static def getDefault(List elements, String defaultValue) {
+		for (DefaultIdentifiableElement element : elements) {
+			if (element.default) {
+				return element.id
+			}
+		}
+		return defaultValue
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -151,6 +177,30 @@ class InitializrMetadata {
 	}
 
 	static class BootVersion extends DefaultIdentifiableElement {
+	}
+
+	static class Defaults {
+		String groupId = 'org.test'
+		String artifactId
+		String version = '0.0.1-SNAPSHOT'
+		String name = 'demo'
+		String description = 'Demo project for Spring Boot'
+		String packageName
+
+		/**
+		 * Return the artifactId or the name of the project if none is set.
+		 */
+		String getArtifactId() {
+			artifactId == null ? name : artifactId
+		}
+
+		/**
+		 * Return the package name or the name of the project if none is set
+		 */
+		String getPackageName() {
+			packageName == null ? name.replace('-', '.') : packageName
+		}
+
 	}
 
 

@@ -44,7 +44,7 @@ class ProjectGenerator {
 	 * Generate a project structure for the specified {@link ProjectRequest}. Returns
 	 * a directory containing the project.
 	 */
-	File getProjectStructure(ProjectRequest request) {
+	File generateProjectStructure(ProjectRequest request) {
 		def model = initializeModel(request)
 
 		File dir = File.createTempFile('tmp', '', new File(tmpdir))

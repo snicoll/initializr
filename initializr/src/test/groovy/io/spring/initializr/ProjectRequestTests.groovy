@@ -1,6 +1,6 @@
 package io.spring.initializr
 
-import io.spring.initializr.support.ProjectMetadataBuilder
+import io.spring.initializr.support.InitializrMetadataBuilder
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -14,7 +14,7 @@ class ProjectRequestTests {
 	@Test
 	public void resolve() {
 		ProjectRequest request = new ProjectRequest()
-		InitializrMetadata metadata = ProjectMetadataBuilder.withDefaults()
+		InitializrMetadata metadata = InitializrMetadataBuilder.withDefaults()
 				.addDependencyGroup('code', 'web', 'security', 'spring-data').get()
 
 		request.style.add('web')
@@ -27,7 +27,7 @@ class ProjectRequestTests {
 	@Test
 	public void resolveUnknownStyle() {
 		ProjectRequest request = new ProjectRequest()
-		InitializrMetadata metadata = ProjectMetadataBuilder.withDefaults()
+		InitializrMetadata metadata = InitializrMetadataBuilder.withDefaults()
 				.addDependencyGroup('code', 'org.foo:bar:1.0').get()
 
 		request.style.add('org.foo:bar:1.0')

@@ -13,31 +13,17 @@ class ProjectRequest {
 
 	def style = []
 
-	String name = 'demo'
-	String type = 'starter'
-	String description = 'Demo project for Spring Boot'
-	String groupId = 'org.test'
+	String name
+	String type
+	String description
+	String groupId
 	String artifactId
-	String version = '0.0.1-SNAPSHOT'
+	String version
 	String bootVersion
-	String packaging = 'jar'
-	String language = 'java'
+	String packaging
+	String language
 	String packageName
-	String javaVersion = '1.7'
-
-	/**
-	 * Return the artifactId or the name of the project if none is set.
-	 */
-	String getArtifactId() {
-		artifactId == null ? name : artifactId
-	}
-
-	/**
-	 * Return the package name or the name of the project if none is set
-	 */
-	String getPackageName() {
-		packageName == null ? name.replace('-', '.') : packageName
-	}
+	String javaVersion
 
 	/**
 	 * Resolve this instance against the specified {@link InitializrMetadata}

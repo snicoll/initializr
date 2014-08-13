@@ -1,7 +1,7 @@
 package io.spring.initializr
 
 import io.spring.initializr.support.PomAssert
-import io.spring.initializr.support.ProjectMetadataBuilder
+import io.spring.initializr.support.InitializrMetadataBuilder
 import org.junit.Before
 import org.junit.Test
 
@@ -15,7 +15,7 @@ class ProjectGeneratorTests {
 
 	@Before
 	void setup() {
-		InitializrMetadata metadata = ProjectMetadataBuilder.withDefaults()
+		InitializrMetadata metadata = InitializrMetadataBuilder.withDefaults()
 				.addDependencyGroup('test', 'web', 'security', 'data-jpa', 'aop', 'batch', 'integration') .get()
 		projectGenerator.metadata = metadata
 	}
@@ -38,9 +38,8 @@ class ProjectGeneratorTests {
 		return new PomAssert(content).validateProjectRequest(request)
 	}
 
-	static ProjectRequest createProjectRequest(String... styles) {
-		ProjectRequest request = new ProjectRequest()
-		request.bootVersion = '1.0.1.RELEASE'
+	ProjectRequest createProjectRequest(String... styles) {
+		ProjectRequest request = projectGenerator.metadata.createProjectRequest()
 		request.style.addAll Arrays.asList(styles)
 		request
 	}

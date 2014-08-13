@@ -1,13 +1,12 @@
 package io.spring.initializr.web
 
-import io.spring.initializr.ProjectGenerator
 import io.spring.initializr.InitializrMetadata
+import io.spring.initializr.ProjectGenerator
 import io.spring.initializr.ProjectRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,9 +27,6 @@ class MainController {
 
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class)
 
-	@Value('${info.spring-boot.version}')
-	private String bootVersion
-
 	@Autowired
 	private InitializrMetadata metadata
 
@@ -39,9 +35,7 @@ class MainController {
 
 	@ModelAttribute
 	ProjectRequest projectRequest() {
-		ProjectRequest request = new ProjectRequest()
-		request.bootVersion = bootVersion
-		request
+		metadata.createProjectRequest()
 	}
 
 	@RequestMapping(value = "/")
@@ -76,7 +70,7 @@ class MainController {
 	@RequestMapping('/starter.zip')
 	@ResponseBody
 	ResponseEntity<byte[]> springZip(ProjectRequest request) {
-		def dir = projectGenerator.getProjectStructure(request)
+		def dir = projectGenerator.generateProjectStructure(request)
 
 		File download = projectGenerator.createDistributionFile(dir, '.zip')
 

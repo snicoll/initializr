@@ -6,13 +6,13 @@ import io.spring.initializr.InitializrMetadata
  *
  * @author Stephane Nicoll
  */
-class ProjectMetadataBuilder {
+class InitializrMetadataBuilder {
 
 	private final InitializrMetadata metadata = new InitializrMetadata()
 
 
-	static ProjectMetadataBuilder withDefaults() {
-		new ProjectMetadataBuilder().addDefaults()
+	static InitializrMetadataBuilder withDefaults() {
+		new InitializrMetadataBuilder().addDefaults()
 	}
 
 	InitializrMetadata get() {
@@ -20,7 +20,7 @@ class ProjectMetadataBuilder {
 		metadata
 	}
 
-	ProjectMetadataBuilder addDependencyGroup(String name, String... ids) {
+	InitializrMetadataBuilder addDependencyGroup(String name, String... ids) {
 		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
 		group.name = name
 		for (String id : ids) {
@@ -32,17 +32,17 @@ class ProjectMetadataBuilder {
 		this
 	}
 
-	ProjectMetadataBuilder addDefaults() {
+	InitializrMetadataBuilder addDefaults() {
 		addDefaultTypes().addDefaultPackagings().addDefaultJavaVersions()
 				.addDefaultLanguages().addDefaultBootVersions()
 	}
 
-	ProjectMetadataBuilder addDefaultTypes() {
+	InitializrMetadataBuilder addDefaultTypes() {
 		addType('pom.xml', false, '/pom.xml').addType('starter.zip', true, '/starter.zip')
 				.addType('build.gradle', false, '/build.gradle').addType('gradle.zip', false, '/starter.zip')
 	}
 
-	ProjectMetadataBuilder addType(String id, boolean defaultValue, String action) {
+	InitializrMetadataBuilder addType(String id, boolean defaultValue, String action) {
 		InitializrMetadata.Type type = new InitializrMetadata.Type();
 		type.id = id
 		type.name = id
@@ -52,11 +52,11 @@ class ProjectMetadataBuilder {
 		this
 	}
 
-	ProjectMetadataBuilder addDefaultPackagings() {
+	InitializrMetadataBuilder addDefaultPackagings() {
 		addPackaging('jar', true).addPackaging('war', false)
 	}
 
-	ProjectMetadataBuilder addPackaging(String id, boolean defaultValue) {
+	InitializrMetadataBuilder addPackaging(String id, boolean defaultValue) {
 		InitializrMetadata.Packaging packaging = new InitializrMetadata.Packaging();
 		packaging.id = id
 		packaging.name = id
@@ -65,11 +65,11 @@ class ProjectMetadataBuilder {
 		this
 	}
 
-	ProjectMetadataBuilder addDefaultJavaVersions() {
+	InitializrMetadataBuilder addDefaultJavaVersions() {
 		addJavaVersion('1.6', false).addJavaVersion('1.7', true).addJavaVersion('1.8', false)
 	}
 
-	ProjectMetadataBuilder addJavaVersion(String version, boolean defaultValue) {
+	InitializrMetadataBuilder addJavaVersion(String version, boolean defaultValue) {
 		InitializrMetadata.JavaVersion javaVersion = new InitializrMetadata.JavaVersion();
 		javaVersion.id = version
 		javaVersion.name = version
@@ -78,11 +78,11 @@ class ProjectMetadataBuilder {
 		this
 	}
 
-	ProjectMetadataBuilder addDefaultLanguages() {
+	InitializrMetadataBuilder addDefaultLanguages() {
 		addLanguage('java', true).addPackaging('groovy', false)
 	}
 
-	ProjectMetadataBuilder addLanguage(String id, boolean defaultValue) {
+	InitializrMetadataBuilder addLanguage(String id, boolean defaultValue) {
 		InitializrMetadata.Language language = new InitializrMetadata.Language();
 		language.id = id
 		language.name = id
@@ -91,12 +91,12 @@ class ProjectMetadataBuilder {
 		this
 	}
 
-	ProjectMetadataBuilder addDefaultBootVersions() {
+	InitializrMetadataBuilder addDefaultBootVersions() {
 		addBootVersion('1.0.2.RELEASE', false).addBootVersion('1.1.5.RELEASE', true)
 				.addBootVersion('1.2.0.BUILD-SNAPSHOT', false)
 	}
 
-	ProjectMetadataBuilder addBootVersion(String id, boolean defaultValue) {
+	InitializrMetadataBuilder addBootVersion(String id, boolean defaultValue) {
 		InitializrMetadata.BootVersion bootVersion = new InitializrMetadata.BootVersion();
 		bootVersion.id = id
 		bootVersion.name = id
