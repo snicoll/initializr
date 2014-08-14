@@ -6,7 +6,7 @@
 
 	<groupId>io.spring.initalizr</groupId>
 	<artifactId>initializr</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,7 +39,6 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-ant</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

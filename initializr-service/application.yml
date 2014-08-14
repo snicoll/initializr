@@ -1,117 +1,128 @@
 info:
   project:
     name: Spring Start
-    version: 0.2.1
+    version: 0.3.0
 # remember to update static/install.sh as well:
   spring-boot:
-    version: 1.1.4.RELEASE
+    version: 1.1.5.RELEASE
 
-projects:
-  styles:
+initializr:
+  dependencies:
     - name: Core
-      starters:
+      description: The core dependencies
+      content:
         - name: Security
-          value: security
+          id: security
+          description: Support for spring-security.
         - name: AOP
-          value: aop
+          id: aop
+          description: Support for aspect-oriented programming including spring-aop and AspectJ.
     - name: Data
-      starters:
+      content:
         - name: JDBC
-          value: jdbc
+          id: jdbc
+          description: JDBC Database support.
         - name: JPA
-          value: data-jpa
+          id: data-jpa
+          aliases:
+            - jpa
         - name: MongoDB
-          value: data-mongodb
+          id: data-mongodb
         - name: Redis
-          value: redis
+          id: redis
         - name: Gemfire
-          value: data-gemfire
+          id: data-gemfire
         - name: Solr
-          value: data-solr
+          id: data-solr
     - name: I/O
-      starters:
-      - name: Batch
-        value: batch
-      - name: Integration
-        value: integration
-      - name: AMQP
-        value: amqp
+      content:
+        - name: Batch
+          id: batch
+        - name: Integration
+          id: integration
+        - name: AMQP
+          id: amqp
     - name: Web
-      starters:
+      content:
         - name: Web
-          value: web
+          id: web
+          description: Support for full-stack web development, including Tomcat and spring-webmvc.
         - name: Websocket
-          value: websocket
+          id: websocket
+          description: Support for websocket development with Tomcat.
         - name: Rest Repositories
-          value: data-rest
+          id: data-rest
         - name: Mobile
-          value: mobile
+          id: mobile
     - name: Template Engines
-      starters:
+      content:
         - name: Freemarker
-          value: freemarker
+          id: freemarker
         - name: Velocity
-          value: velocity
+          id: velocity
         - name: Groovy Templates
-          value: groovy-templates
+          id: groovy-templates
         - name: Thymeleaf
-          value: thymeleaf
+          id: thymeleaf
     - name: Social
-      starters:
+      content:
         - name: Facebook
-          value: social-facebook
+          id: social-facebook
         - name: LinkedIn
-          value: social-linkedin
+          id: social-linkedin
         - name: Twitter
-          value: social-twitter
+          id: social-twitter
     - name: Ops
-      starters:
+      content:
         - name: Actuator
-          value: actuator
+          id: actuator
         - name: Remote Shell
-          value: remote-shell
+          id: remote-shell
   types:
     - name: Maven POM
+      id: pom.xml
+      default: false
       action: /pom.xml
-      value: pom.xml
-      selected: false
     - name: Maven Project
+      id: starter.zip
+      default: true
       action: /starter.zip
-      value: starter.zip
-      selected: true
     - name: Gradle Config
+      id: build.gradle
+      default: false
       action: /build.gradle
-      value: build.gradle
-      selected: false
     - name: Gradle Project
+      id: gradle.zip
+      default: false
       action: /starter.zip
-      value: gradle.zip
-      selected: false
   packagings:
     - name: Jar
-      value: jar
-      selected: true
+      id: jar
+      default: true
     - name: War
-      value: war
-      selected: false
+      id: war
+      default: false
   javaVersions:
-    - value: 1.6
-      selected: false
-    - value: 1.7
-      selected: true
-    - value: 1.8
-      selected: false
+    - id: 1.6
+      default: false
+    - id: 1.7
+      default: true
+    - id: 1.8
+      default: false
   languages:
     - name: Groovy
-      value: groovy
-      selected: false
+      id: groovy
+      default: false
     - name: Java
-      value: java
-      selected: true
+      id: java
+      default: true
   bootVersions:
-    - value: 1.1.5.BUILD-SNAPSHOT
-      selected: false
-    - value: 1.1.4.RELEASE
-      selected: true
-    - value: 1.0.2.RELEASE
-      selected: false
+    - name : Latest SNAPSHOT
+      id: 1.2.0.BUILD-SNAPSHOT
+      default: false
+    - name: 1.1.5
+      id: 1.1.5.RELEASE
+      default: true
+    - name: 1.0.2
+      id: 1.0.2.RELEASE
+      default: false
