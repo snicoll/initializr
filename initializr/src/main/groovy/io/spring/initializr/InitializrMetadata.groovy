@@ -39,8 +39,7 @@ class InitializrMetadata {
 		return indexedDependencies.get(id)
 	}
 
-	ProjectRequest createProjectRequest() {
-		ProjectRequest request = new ProjectRequest();
+	void initializeProjectRequest(ProjectRequest request) {
 		defaults.properties.each { key, value ->
 			if (request.hasProperty(key) && !(key in ['class', 'metaClass'])) {
 				request[key] = value
@@ -130,6 +129,9 @@ class InitializrMetadata {
 
 		@JsonIgnore
 		List<String> aliases = []
+
+		@JsonIgnore
+		List<String> facets = []
 
 		@JsonIgnore
 		String groupId

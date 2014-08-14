@@ -19,9 +19,9 @@ class ProjectRequestTests {
 
 		request.style.add('web')
 		request.style.add('spring-data')
-		List<InitializrMetadata.Dependency> dependencies = request.resolveDependencies(metadata)
-		assertBootStarter(dependencies.get(0), 'web')
-		assertBootStarter(dependencies.get(1), 'spring-data')
+		request.resolve(metadata)
+		assertBootStarter(request.dependencies.get(0), 'web')
+		assertBootStarter(request.dependencies.get(1), 'spring-data')
 	}
 
 	@Test
@@ -32,9 +32,9 @@ class ProjectRequestTests {
 
 		request.style.add('org.foo:bar:1.0')
 		request.style.add('foo-bar')
-		List<InitializrMetadata.Dependency> dependencies = request.resolveDependencies(metadata)
-		assertDependency(dependencies.get(0), 'org.foo', 'bar', '1.0')
-		assertBootStarter(dependencies.get(1), 'foo-bar')
+		request.resolve(metadata)
+		assertDependency(request.dependencies.get(0), 'org.foo', 'bar', '1.0')
+		assertBootStarter(request.dependencies.get(1), 'foo-bar')
 	}
 
 	private static void assertBootStarter(InitializrMetadata.Dependency actual, String name) {

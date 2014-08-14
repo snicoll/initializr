@@ -35,7 +35,9 @@ class MainController {
 
 	@ModelAttribute
 	ProjectRequest projectRequest() {
-		metadata.createProjectRequest()
+		ProjectRequest request = new ProjectRequest();
+		metadata.initializeProjectRequest(request)
+		request
 	}
 
 	@RequestMapping(value = "/")

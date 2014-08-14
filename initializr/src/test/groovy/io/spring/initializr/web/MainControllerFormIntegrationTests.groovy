@@ -7,9 +7,7 @@ import io.spring.initializr.support.ProjectAssert
 import io.spring.initializr.web.support.HomePage
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles

@@ -10,6 +10,8 @@ initializr:
       content:
         - name: Web
           id: web
+          facets:
+            - web
           description: Necessary infrastructure to build a REST service
         - name: Security
           id: security

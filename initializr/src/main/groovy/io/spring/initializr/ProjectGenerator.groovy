@@ -72,7 +72,7 @@ class ProjectGenerator {
 
 		File test = new File(new File(dir, 'src/test/' + language), request.packageName.replace('.', '/'))
 		test.mkdirs()
-		if (request.isWebStyle()) {
+		if (request.hasWebFacet()) {
 			model.testAnnotations = '@WebAppConfiguration\n'
 			model.testImports = 'import org.springframework.test.context.web.WebAppConfiguration;\n'
 		} else {
@@ -85,7 +85,7 @@ class ProjectGenerator {
 		resources.mkdirs()
 		new File(resources, 'application.properties').write('')
 
-		if (request.isWebStyle()) {
+		if (request.hasWebFacet()) {
 			new File(dir, 'src/main/resources/templates').mkdirs()
 			new File(dir, 'src/main/resources/static').mkdirs()
 		}
@@ -125,11 +125,8 @@ class ProjectGenerator {
 	private Map initializeModel(ProjectRequest request) {
 		Assert.notNull request.bootVersion, 'boot version must not be null'
 		def model = [:]
-		if (request.packaging == 'war' && !request.isWebStyle()) {
-			request.style << 'web'
-		}
+		request.resolve(metadata)
 		request.properties.each { model[it.key] = it.value }
-		model.dependencies = request.resolveDependencies(metadata)
 		model
 	}
 

@@ -47,6 +47,8 @@ initializr:
         - name: Web
           id: web
           description: Support for full-stack web development, including Tomcat and spring-webmvc.
+          facets:
+            - web
         - name: Websocket
           id: websocket
           description: Support for websocket development with Tomcat.
@@ -58,12 +60,20 @@ initializr:
       content:
         - name: Freemarker
           id: freemarker
+          facets:
+            - web
         - name: Velocity
           id: velocity
+          facets:
+            - web
         - name: Groovy Templates
           id: groovy-templates
+          facets:
+            - web
         - name: Thymeleaf
           id: thymeleaf
+          facets:
+            - web
     - name: Social
       content:
         - name: Facebook

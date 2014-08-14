@@ -32,6 +32,14 @@ class InitializrMetadataBuilder {
 		this
 	}
 
+	InitializrMetadataBuilder addDependencyGroup(String name, InitializrMetadata.Dependency... dependencies) {
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
+		group.name = name
+		group.content.addAll(dependencies)
+		metadata.dependencies.add(group)
+		this
+	}
+
 	InitializrMetadataBuilder addDefaults() {
 		addDefaultTypes().addDefaultPackagings().addDefaultJavaVersions()
 				.addDefaultLanguages().addDefaultBootVersions()

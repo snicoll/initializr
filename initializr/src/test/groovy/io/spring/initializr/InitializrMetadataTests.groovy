@@ -154,7 +154,7 @@ class InitializrMetadataTests {
 	@Test
 	public void createProjectRequest() {
 		InitializrMetadata metadata = InitializrMetadataBuilder.withDefaults().get()
-		ProjectRequest request = metadata.createProjectRequest()
+		ProjectRequest request = doCreateProjectRequest(metadata)
 		assertEquals metadata.defaults.groupId, request.groupId
 	}
 
@@ -172,6 +172,12 @@ class InitializrMetadataTests {
 		elements << createJavaVersion('one', false) << createJavaVersion('two', true)
 		assertEquals 'two', InitializrMetadata.getDefault(elements, 'three')
 
+	}
+
+	private static ProjectRequest doCreateProjectRequest(InitializrMetadata metadata) {
+		ProjectRequest request = new ProjectRequest()
+		metadata.initializeProjectRequest(request)
+		request
 	}
 
 	private static InitializrMetadata.Dependency createDependency(String id) {

@@ -4,6 +4,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
+ * A request to generate a project. Each instance should be resolved against an
+ * {@link InitializrMetadata} instance.
+ *
  * @author Dave Syer
  * @author Stephane Nicoll
  */
@@ -25,33 +28,57 @@ class ProjectRequest {
 	String packageName
 	String javaVersion
 
+	def dependencies = []
+	def facets = []
+
 	/**
 	 * Resolve this instance against the specified {@link InitializrMetadata}
 	 */
-	List<InitializrMetadata.Dependency> resolveDependencies(InitializrMetadata projectMetadata) {
+	void resolve(InitializrMetadata metadata) {
 		if (style == null || style.size() == 0) {
 			style = []
 		}
 		if (!style.class.isArray() && !(style instanceof Collection)) {
 			style = [style]
 		}
-		style.collect {
-			InitializrMetadata.Dependency dependency = projectMetadata.getDependency(it);
+		dependencies = style.collect {
+			InitializrMetadata.Dependency dependency = metadata.getDependency(it);
 			if (dependency == null) {
-				logger.warn("No known dependency for style "+it+" assuming spring-boot-starter")
-				dependency =  new InitializrMetadata.Dependency()
+				logger.warn("No known dependency for style " + it + " assuming spring-boot-starter")
+				dependency = new InitializrMetadata.Dependency()
 				dependency.asSpringBootStarter(it)
 			}
 			dependency
 		}
+		dependencies.each {
+			it.facets.each {
+				if (!facets.contains(it)) {
+					facets.add(it)
+				}
+			}
+		}
+		handleFacets(metadata)
 	}
 
-
-	boolean isWebStyle() {
-		style.any { webStyle(it) }
+	protected handleFacets(InitializrMetadata metadata) {
+		if (packaging == 'war' && !hasWebFacet()) {
+			// Need to be able to bootstrap the app
+			dependencies << metadata.getDependency('web')
+			facets << 'web'
+		}
 	}
 
-	private boolean webStyle(String style) {
-		style.contains('web') || style.contains('thymeleaf') || style.contains('freemarker') || style.contains('velocity') || style.contains('groovy-template')
+	/**
+	 * Specify if this request has the web facet enabled.
+	 */
+	boolean hasWebFacet() {
+		hasFacet('web')
+	}
+
+	/**
+	 * Specify if this request has the specified facet enabled
+	 */
+	boolean hasFacet(String facet) {
+		facets.contains(facet)
 	}
 }
