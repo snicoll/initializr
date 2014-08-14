@@ -24,9 +24,6 @@ import org.springframework.web.context.WebApplicationContext
 @ActiveProfiles('test-default')
 class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrationTests {
 
-	@Rule
-	public final TemporaryFolder folder = new TemporaryFolder();
-
 	@Autowired
 	private WebApplicationContext context
 

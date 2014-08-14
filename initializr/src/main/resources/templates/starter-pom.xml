@@ -21,7 +21,8 @@
 	<dependencies><% dependencies.each { %>
 		<dependency>
 			<groupId>${it.groupId}</groupId>
-			<artifactId>${it.artifactId}</artifactId>
+			<artifactId>${it.artifactId}</artifactId><% if (it.version != null) { %>
+			<version>${it.version}</version><% } %>
 		</dependency><% } %><% if (language=='groovy') { %>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>

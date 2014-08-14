@@ -97,8 +97,16 @@ class PomAssert {
 	}
 
 	PomAssert hasDependency(String groupId, String artifactId) {
-		def id = groupId + ':' + artifactId
-		assertNotNull 'No dependency found with ' + id + ' --> ' + dependencies.keySet(), dependencies.get(id)
+		hasDependency(groupId, artifactId, null)
+	}
+
+	PomAssert hasDependency(String groupId, String artifactId, String version) {
+		def id = generateId(groupId, artifactId)
+		def dependency = dependencies.get(id)
+		assertNotNull 'No dependency found with ' + id + ' --> ' + dependencies.keySet(), dependency
+		if (version != null) {
+			assertEquals 'Wrong version for '+dependency, version, dependency.version
+		}
 		this
 	}
 
@@ -161,10 +169,14 @@ class PomAssert {
 					dependency.version = version.item(0).getTextContent()
 				}
 				dependency.generateId()
-				dependencies.put(dependency.id, dependency)
+				dependencies.put(generateId(dependency.groupId, dependency.artifactId), dependency)
 			}
 
 		}
+	}
+
+	private String generateId(String groupId, String artifactId) {
+		groupId + ':' + artifactId
 	}
 
 

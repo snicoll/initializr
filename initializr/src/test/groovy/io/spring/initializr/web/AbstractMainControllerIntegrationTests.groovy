@@ -1,5 +1,7 @@
 package io.spring.initializr.web
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 
 import org.springframework.beans.factory.annotation.Value
@@ -18,6 +20,9 @@ import org.springframework.web.client.RestTemplate
 @WebAppConfiguration
 @IntegrationTest('server.port=0')
 abstract class AbstractMainControllerIntegrationTests {
+
+	@Rule
+	public final TemporaryFolder folder = new TemporaryFolder();
 
 	@Value('${local.server.port}')
 	private int port

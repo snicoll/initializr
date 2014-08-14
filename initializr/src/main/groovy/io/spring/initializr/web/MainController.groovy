@@ -85,4 +85,22 @@ class MainController {
 		result
 	}
 
+	@RequestMapping(value='/starter.tgz', produces='application/x-compress')
+	@ResponseBody
+	ResponseEntity<byte[]> springTgz(ProjectRequest request) {
+		def dir = projectGenerator.generateProjectStructure(request)
+
+		File download = projectGenerator.createDistributionFile(dir, '.tgz')
+
+		new AntBuilder().tar(destfile: download, compression: 'gzip') {
+			zipfileset(dir:dir, includes:'**')
+		}
+		logger.info("Uploading: ${download} (${download.bytes.length} bytes)")
+		def result = new ResponseEntity<byte[]>(download.bytes,
+				['Content-Type':'application/x-compress'] as HttpHeaders, HttpStatus.OK)
+
+		projectGenerator.cleanTempFiles(dir)
+		result
+	}
+
 }

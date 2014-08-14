@@ -2,6 +2,9 @@ package io.spring.initializr.web
 
 import java.nio.charset.Charset
 
+import io.spring.initializr.support.ProjectAssert
+import io.spring.initializr.support.ZipUtils
+import org.apache.tools.ant.taskdefs.GUnzip
 import org.json.JSONObject
 import org.junit.Test
 import org.skyscreamer.jsonassert.JSONAssert
@@ -34,6 +37,24 @@ class MainControllerIntegrationTests extends AbstractMainControllerIntegrationTe
 		String json = restTemplate.getForObject(createUrl('/'), String.class)
 		JSONObject expected = readJson('1.0')
 		JSONAssert.assertEquals(expected, new JSONObject(json), JSONCompareMode.LENIENT)
+	}
+
+	@Test
+	public void simpleZipProject() {
+		downloadZip('/starter.zip?style=web&style=jpa').isJavaProject().isMavenProject()
+				.hasStaticAndTemplatesResources(true).pomAssert()
+				.hasDependenciesCount(3)
+				.hasSpringBootStarterDependency('web')
+				.hasSpringBootStarterDependency('data-jpa') // alias jpa -> data-jpa
+				.hasSpringBootStarterDependency('test')
+	}
+
+	@Test
+	public void simpleTgzProject() {
+		downloadTgz('/starter.tgz?style=org.acme:bar:2.1.0').isJavaProject().isMavenProject()
+				.hasStaticAndTemplatesResources(false).pomAssert()
+				.hasDependenciesCount(2)
+				.hasDependency('org.acme', 'bar', '2.1.0')
 	}
 
 	// Existing tests for backward compatibility
@@ -97,6 +118,30 @@ class MainControllerIntegrationTests extends AbstractMainControllerIntegrationTe
 		headers.setAccept([MediaType.TEXT_HTML])
 		restTemplate.exchange(createUrl('/'), HttpMethod.GET, new HttpEntity<Void>(headers), String).body
 	}
+
+	private ProjectAssert downloadZip(String context) {
+		byte[] body = restTemplate.getForObject(createUrl(context), byte[])
+		def project = folder.newFolder()
+		ZipUtils.unzip(new ByteArrayInputStream(body), project)
+		new ProjectAssert(project)
+	}
+
+	private ProjectAssert downloadTgz(String context) {
+		byte[] body = restTemplate.getForObject(createUrl(context), byte[])
+		// Write the TGZ somewhere
+		def tgzFile = folder.newFile()
+		def stream = new FileOutputStream(tgzFile)
+		try {
+			stream.write(body)
+		} finally {
+			stream.close()
+		}
+
+		def project = folder.newFolder()
+		new AntBuilder().untar(dest: project, src:tgzFile , compression: 'gzip');
+		new ProjectAssert(project)
+	}
+
 
 
 	private static JSONObject readJson(String version) {
