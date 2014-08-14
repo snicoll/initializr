@@ -206,7 +206,8 @@ class InitializrMetadata {
 
 	static class DefaultIdentifiableElement extends IdentifiableElement {
 
-		boolean defaultValue
+		@JsonIgnore
+		private boolean defaultValue
 
 		void setDefault(boolean defaultValue) {
 			this.defaultValue = defaultValue

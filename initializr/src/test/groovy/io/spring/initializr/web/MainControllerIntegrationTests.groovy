@@ -1,17 +1,24 @@
 package io.spring.initializr.web
 
+import java.nio.charset.Charset
+
 import io.spring.initializr.support.PomAssert
+import org.json.JSONObject
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
+import org.springframework.util.StreamUtils
 import org.springframework.web.client.RestTemplate
 
 import static org.junit.Assert.*
@@ -32,41 +39,21 @@ class MainControllerIntegrationTests {
 	private final RestTemplate restTemplate = new RestTemplate()
 
 	@Test
-	public void validateProjectMetadata() {
+	// Test that the current output is exactly what we expect
+	public void validateCurrentProjectMetadata() {
 		String json = restTemplate.getForObject(createUrl('/'), String.class)
-		JsonAssert rootAssert = new JsonAssert(json)
-
-		rootAssert.hasNoField('indexedDependencies')
-		rootAssert.assertSize(7)
-
-		rootAssert.assertRootSize('dependencies', 2)
-		JsonAssert dependenciesAssert = rootAssert.getChild('dependencies')
-		dependenciesAssert.assertArraySize(2)  // 2 groups
-
-
-		JsonAssert coreGroupAssert = dependenciesAssert.getElement(0)
-		coreGroupAssert.assertField('name', 'Core')
-		coreGroupAssert.assertField('description', 'The core dependencies')
-		coreGroupAssert.assertRootSize('content', 3)
-		JsonAssert webDependency = coreGroupAssert.getChild('content').getElement(0)
-		assertDependency(webDependency, 'web',
-				'Web', 'Necessary infrastructure to build a REST service')
-
-
-		JsonAssert otherGroupAssert = dependenciesAssert.getElement(1)
-		otherGroupAssert.assertField('name', 'Other')
-		otherGroupAssert.hasNoField('description')
-		otherGroupAssert.assertRootSize('content', 2)
-		JsonAssert otherDependencies = otherGroupAssert.getChild('content')
-		assertDependency(otherDependencies.getElement(0), 'org.acme:foo:1.3.5', 'Foo', null)
-		assertDependency(otherDependencies.getElement(1), 'org.acme:bar:2.1.0', 'Bar', null)
-
-		rootAssert.assertRootSize('types', 4)
-		rootAssert.assertRootSize('packagings', 2)
-		rootAssert.assertRootSize('javaVersions', 3)
-		rootAssert.assertRootSize('languages', 2)
-		rootAssert.assertRootSize('bootVersions', 3)
+		JSONObject expected = readJson('1.0')
+		JSONAssert.assertEquals(expected, new JSONObject(json), JSONCompareMode.STRICT)
 	}
+
+	@Test
+	// Test that the  current code complies "at least" with 1.0
+	public void validateProjectMetadata10() {
+		String json = restTemplate.getForObject(createUrl('/'), String.class)
+		JSONObject expected = readJson('1.0')
+		JSONAssert.assertEquals(expected, new JSONObject(json), JSONCompareMode.LENIENT)
+	}
+
 
 	@Test
 	void generateDefaultPom() { // see defaults customization
@@ -132,17 +119,6 @@ class MainControllerIntegrationTests {
 		assertNotNull(response.body)
 	}
 
-	private static void assertDependency(JsonAssert jsonAssert, String id, String name, String description) {
-		jsonAssert.assertField('id', id)
-		jsonAssert.assertField('name', name)
-		if (description != null) {
-			jsonAssert.assertField('description', description)
-		} else {
-			jsonAssert.hasNoField('description')
-		}
-		jsonAssert.hasNoField('groupId', 'artifactId', 'version')
-	}
-
 	private String home() {
 		HttpHeaders headers = new HttpHeaders()
 		headers.setAccept([MediaType.TEXT_HTML])
@@ -152,6 +128,18 @@ class MainControllerIntegrationTests {
 	private String createUrl(String context) {
 		return 'http://localhost:' + port + context
 	}
+
+	private static JSONObject readJson(String version) {
+		def resource = new ClassPathResource('metadata/test-default-' + version + '.json')
+		def stream = resource.getInputStream()
+		try {
+			String json = StreamUtils.copyToString(stream, Charset.forName('UTF-8'))
+			new JSONObject(json)
+		} finally {
+			stream.close()
+		}
+	}
+
 
 	@EnableAutoConfiguration
 	static class Config {
