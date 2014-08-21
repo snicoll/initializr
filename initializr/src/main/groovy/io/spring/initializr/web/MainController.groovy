@@ -17,6 +17,7 @@
 package io.spring.initializr.web
 
 import io.spring.initializr.InitializrMetadata
+import io.spring.initializr.InitializrMetadataProvider
 import io.spring.initializr.ProjectGenerator
 import io.spring.initializr.ProjectRequest
 import org.slf4j.Logger
@@ -48,7 +49,7 @@ class MainController {
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class)
 
 	@Autowired
-	private InitializrMetadata metadata
+	private InitializrMetadataProvider metadataProvider
 
 	@Autowired
 	private ProjectGenerator projectGenerator
@@ -56,32 +57,32 @@ class MainController {
 	@ModelAttribute
 	ProjectRequest projectRequest() {
 		ProjectRequest request = new ProjectRequest()
-		metadata.initializeProjectRequest(request)
+		metadataProvider.get().initializeProjectRequest(request)
 		request
 	}
 
 	@RequestMapping(value = "/")
 	@ResponseBody
 	InitializrMetadata metadata() {
-		metadata
+		metadataProvider.get()
 	}
 
 	@RequestMapping(value = '/', produces = 'text/html')
 	@ResponseBody
 	String home() {
 		def model = [:]
-		metadata.properties.each { model[it.key] = it.value }
+		metadataProvider.get().properties.each { model[it.key] = it.value }
 		template 'home.html', model
 	}
 
 	@RequestMapping('/spring')
 	String spring() {
-		'redirect:' + metadata.env.createCliDistributionURl(metadata.defaults.bootVersion, 'zip')
+		'redirect:' + metadataProvider.get().createCliDistributionURl('zip')
 	}
 
 	@RequestMapping(value = ['/spring.tar.gz', 'spring.tgz'])
 	String springTgz() {
-		'redirect:' + metadata.env.createCliDistributionURl(metadata.defaults.bootVersion, 'tar.gz')
+		'redirect:' + metadataProvider.get().createCliDistributionURl('tar.gz')
 	}
 
 	@RequestMapping('/pom')
