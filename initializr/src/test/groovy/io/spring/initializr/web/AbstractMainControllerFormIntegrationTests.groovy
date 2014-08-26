@@ -33,11 +33,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 /**
- *
  * @author Stephane Nicoll
  */
 @ActiveProfiles('test-default')
-class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrationTests {
+abstract class AbstractMainControllerFormIntegrationTests extends AbstractMainControllerIntegrationTests {
 
 	@Autowired
 	private WebApplicationContext context
@@ -61,7 +60,7 @@ class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrati
 	@Test
 	void createDefaultProject() {
 		HomePage page = home()
-		ProjectAssert projectAssert = projectAssert(page.generateProject(), ArchiveType.ZIP)
+ 		ProjectAssert projectAssert = zipProjectAssert(page.generateProject())
 		projectAssert.isMavenProject().isJavaProject().hasStaticAndTemplatesResources(false)
 				.pomAssert().hasDependenciesCount(1).hasSpringBootStarterDependency('test')
 	}
@@ -74,7 +73,7 @@ class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrati
 		page.name = 'My project'
 		page.description = 'A description for my project'
 		page.dependencies << 'web' << 'data-jpa'
-		ProjectAssert projectAssert = projectAssert(page.generateProject(), ArchiveType.ZIP)
+		ProjectAssert projectAssert = zipProjectAssert(page.generateProject())
 		projectAssert.isMavenProject().isJavaProject().hasStaticAndTemplatesResources(true)
 
 		projectAssert.pomAssert().hasGroupId('com.acme').hasArtifactId('foo-bar')
@@ -89,7 +88,7 @@ class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrati
 		HomePage page = home()
 		page.type = 'gradle.zip'
 		page.dependencies << 'data-jpa'
-		ProjectAssert projectAssert = projectAssert(page.generateProject(), ArchiveType.ZIP)
+		ProjectAssert projectAssert = zipProjectAssert(page.generateProject())
 		projectAssert.isGradleProject().isJavaProject().hasStaticAndTemplatesResources(false)
 	}
 
@@ -97,7 +96,7 @@ class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrati
 	void createWarProject() {
 		HomePage page = home()
 		page.packaging = 'war'
-		ProjectAssert projectAssert = projectAssert(page.generateProject(), ArchiveType.ZIP)
+		ProjectAssert projectAssert = zipProjectAssert(page.generateProject())
 		projectAssert.isMavenProject().isJavaWarProject()
 				.pomAssert().hasPackaging('war').hasDependenciesCount(3)
 				.hasSpringBootStarterDependency('web') // Added with war packaging
@@ -106,8 +105,19 @@ class MainControllerFormIntegrationTests extends AbstractMainControllerIntegrati
 	}
 
 	HomePage home() {
-		WebRequest request = new WebRequest(new URL('http://localhost/'), 'text/html')
+		WebRequest request = new WebRequest(new URL('http://localhost' + homeContext()), 'text/html')
 		HtmlPage home = webClient.getPage(request)
-		return new HomePage(home)
+		createHomePage(home)
 	}
+
+	/**
+	 * Provide the context of the home page
+	 */
+	protected abstract String homeContext();
+
+	/**
+	 * Create a {@link HomePage} instance based on the specified {@link HtmlPage}
+	 */
+	protected abstract HomePage createHomePage(HtmlPage home)
+
 }

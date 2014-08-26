@@ -69,9 +69,19 @@ class MainController {
 	@RequestMapping(value = '/', produces = 'text/html')
 	@ResponseBody
 	String home() {
+		renderHome('home.html')
+	}
+
+	@RequestMapping(value = '/sts', produces = 'text/html')
+	@ResponseBody
+	String stsHome() {
+		renderHome('sts-home.html')
+	}
+
+	private String renderHome(String templatePath) {
 		def model = [:]
 		metadata.properties.each { model[it.key] = it.value }
-		template 'home.html', model
+		template templatePath, model
 	}
 
 	@RequestMapping('/spring')
