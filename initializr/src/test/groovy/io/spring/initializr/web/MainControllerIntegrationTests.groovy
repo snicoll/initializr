@@ -19,15 +19,13 @@ package io.spring.initializr.web
 import java.nio.charset.Charset
 
 import groovy.json.JsonSlurper
+import io.spring.initializr.InitializrMetadataVersion
 import org.json.JSONObject
 import org.junit.Test
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
 
 import org.springframework.core.io.ClassPathResource
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -46,8 +44,7 @@ import static org.junit.Assert.*
 @ActiveProfiles('test-default')
 class MainControllerIntegrationTests extends AbstractInitializrControllerIntegrationTests {
 
-	private static final MediaType CURRENT_METADATA_MEDIA_TYPE =
-			MediaType.parseMediaType('application/vnd.initializr.v2+json')
+	private static final MediaType CURRENT_METADATA_MEDIA_TYPE = InitializrMetadataVersion.V2_1.mediaType
 
 	private final def slurper = new JsonSlurper()
 
@@ -139,8 +136,20 @@ class MainControllerIntegrationTests extends AbstractInitializrControllerIntegra
 	}
 
 	@Test
-	void metadataWithCurrentAcceptHeader() {
+	void currentMetadataCompatibleWithV2() {
+		ResponseEntity<String> response = invokeHome(null, '*/*')
+		validateMetadata(response, CURRENT_METADATA_MEDIA_TYPE, '2.0.0', JSONCompareMode.LENIENT)
+	}
+
+	@Test
+	void metadataWithV2AcceptHeader() {
 		ResponseEntity<String> response = invokeHome(null, 'application/vnd.initializr.v2+json')
+		validateMetadata(response, InitializrMetadataVersion.V2.mediaType, '2.0.0', JSONCompareMode.STRICT)
+	}
+
+	@Test
+	void metadataWithCurrentAcceptHeader() {
+		ResponseEntity<String> response = invokeHome(null, 'application/vnd.initializr.v2.1+json')
 		validateContentType(response, CURRENT_METADATA_MEDIA_TYPE)
 		validateCurrentMetadata(new JSONObject(response.body))
 	}
@@ -213,13 +222,21 @@ class MainControllerIntegrationTests extends AbstractInitializrControllerIntegra
 		validateCurrentMetadata(json)
 	}
 
+	private void validateMetadata(ResponseEntity<String> response, MediaType mediaType,
+								  String version, JSONCompareMode compareMode) {
+		validateContentType(response, mediaType)
+		def json = new JSONObject(response.body)
+		def expected = readJson(version)
+		JSONAssert.assertEquals(expected, json, compareMode)
+	}
+
 	private void validateCurrentMetadata(ResponseEntity<String> response) {
 		validateContentType(response, CURRENT_METADATA_MEDIA_TYPE)
 		validateCurrentMetadata(new JSONObject(response.body))
 	}
 
 	private void validateCurrentMetadata(JSONObject json) {
-		def expected = readJson('2.0.0')
+		def expected = readJson('2.1.0')
 		JSONAssert.assertEquals(expected, json, JSONCompareMode.STRICT)
 	}
 
@@ -248,7 +265,7 @@ class MainControllerIntegrationTests extends AbstractInitializrControllerIntegra
 				not(containsString("curl"))))
 	}
 
-	@Test // Test that the  current code complies exactly with 1.1.0
+	@Test // Test that the current code complies exactly with 1.1.0
 	void validateProjectMetadata110() {
 		JSONObject json = getMetadataJson("SpringBootCli/1.2.0.RC1", null)
 		def expected = readJson('1.0.1')
@@ -381,7 +398,7 @@ class MainControllerIntegrationTests extends AbstractInitializrControllerIntegra
 		assertNotNull(response.body)
 	}
 
-	private JSONObject getMetadataJson()  {
+	private JSONObject getMetadataJson() {
 		getMetadataJson(null, null)
 	}
 

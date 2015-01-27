@@ -19,6 +19,7 @@ package io.spring.initializr.web
 import groovy.util.logging.Slf4j
 import io.spring.initializr.CommandLineHelpGenerator
 import io.spring.initializr.InitializrMetadata
+import io.spring.initializr.InitializrMetadataVersion
 import io.spring.initializr.ProjectGenerator
 import io.spring.initializr.ProjectRequest
 
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 /**
@@ -88,11 +88,20 @@ class MainController extends AbstractInitializrController {
 		builder.body(commandLineHelpGenerator.generateGenericCapabilities(metadata, appUrl))
 	}
 
-	@RequestMapping(value = "/", produces = ["application/vnd.initializr.v2+json", "application/json"])
-	ResponseEntity<String> serviceCapabilities() {
+	@RequestMapping(value = "/", produces = ["application/vnd.initializr.v2.1+json", "application/json"])
+	ResponseEntity<String> serviceCapabilitiesV21() {
+		serviceCapabilitiesFor(InitializrMetadataVersion.V2_1)
+	}
+
+	@RequestMapping(value = "/", produces = ["application/vnd.initializr.v2+json"])
+	ResponseEntity<String> serviceCapabilitiesV2() {
+		serviceCapabilitiesFor(InitializrMetadataVersion.V2)
+	}
+
+	private ResponseEntity<String> serviceCapabilitiesFor(InitializrMetadataVersion version) {
 		String appUrl = ServletUriComponentsBuilder.fromCurrentServletMapping().build()
-		def content = metadataProvider.get().generateJson(appUrl)
-		return ResponseEntity.ok().contentType(META_DATA_V2).body(content)
+		def content = metadataProvider.get().generateJson(version, appUrl)
+		return ResponseEntity.ok().contentType(version.mediaType).body(content)
 	}
 
 	@RequestMapping(value = '/', produces = 'text/html')

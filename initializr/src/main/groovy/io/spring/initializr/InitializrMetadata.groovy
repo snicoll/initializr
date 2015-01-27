@@ -22,6 +22,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
+import io.spring.initializr.mapper.InitializrMetadataJsonMapper
+import io.spring.initializr.mapper.InitializrMetadataV21JsonMapper
+import io.spring.initializr.mapper.InitializrMetadataV2JsonMapper
+import io.spring.initializr.support.InvalidVersionException
+import io.spring.initializr.support.Version
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
@@ -64,8 +69,6 @@ class InitializrMetadata {
 
 	@JsonIgnore
 	private final Map<String, Dependency> indexedDependencies = [:]
-
-	private final transient InitializrMetadataJsonMapper jsonMapper = new InitializrMetadataJsonMapper()
 
 	/**
 	 * Return the {@link Dependency} with the specified id or {@code null} if
@@ -131,11 +134,11 @@ class InitializrMetadata {
 
 	/**
 	 * Generate a JSON representation of the current metadata
-	 *
+	 * @param version the meta-data version
 	 * @param appUrl the application url
 	 */
-	String generateJson(String appUrl) {
-		jsonMapper.write(this, appUrl)
+	String generateJson(InitializrMetadataVersion version, String appUrl) {
+		getJsonMapper(version).write(this, appUrl)
 	}
 
 	/**
@@ -197,6 +200,22 @@ class InitializrMetadata {
 						"Invalid dependency, id should have the form groupId:artifactId[:version] but got $id")
 			}
 		}
+		if (dependency.since) {
+			try {
+				Version.parse(dependency.since)
+			} catch (InvalidVersionException ex) {
+				throw new InvalidInitializrMetadataException("Invalid since version '$dependency.since' for " +
+						"dependency with id '$dependency.id'")
+			}
+		}
+		if (dependency.until) {
+			try {
+				Version.parse(dependency.until)
+			} catch (InvalidVersionException ex) {
+				throw new InvalidInitializrMetadataException("Invalid until version '$dependency.until' for " +
+						"dependency with id '$dependency.id'")
+			}
+		}
 	}
 
 	static def getDefault(List elements) {
@@ -207,6 +226,13 @@ class InitializrMetadata {
 		}
 		log.warn("No default found amongst $elements")
 		return (elements.isEmpty() ? null : elements.get(0).id)
+	}
+
+	private static InitializrMetadataJsonMapper getJsonMapper(InitializrMetadataVersion version) {
+		switch(version) {
+			case InitializrMetadataVersion.V2: return new InitializrMetadataV2JsonMapper();
+			default: return new InitializrMetadataV21JsonMapper();
+		}
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -237,6 +263,10 @@ class InitializrMetadata {
 		String version
 
 		String description
+
+		String since;
+
+		String until;
 
 		/**
 		 * Specify if the dependency has its coordinates set, i.e. {@code groupId}

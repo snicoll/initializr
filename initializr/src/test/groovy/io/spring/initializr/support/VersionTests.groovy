@@ -130,7 +130,7 @@ class VersionTests {
 
 	@Test
 	void parseInvalidVersion() {
-		thrown.expect(IllegalArgumentException)
+		thrown.expect(InvalidVersionException)
 		parse('foo')
 	}
 

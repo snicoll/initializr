@@ -68,9 +68,17 @@ initializr:
         - name: WS
           id: ws
           description: Support for Spring Web Services
+        - name: Jersey (JAX-RS)
+          id: jersey
+          description: Support for the Jersey RESTful Web Services framework
+          since: 1.2.0.RELEASE
         - name: Rest Repositories
           id: data-rest
           description: Support for exposing Spring Data repositories over REST via spring-data-rest-webmvc
+        - name: HATEOAS
+          id: hateoas
+          description: Support for HATEOAS-based RESTful services
+          since: 1.2.2.BUILD-SNAPSHOT
         - name: Mobile
           id: mobile
           description: Support for spring-mobile
@@ -112,6 +120,10 @@ initializr:
         - name: Actuator
           id: actuator
           description: Production ready features to help you monitor and manage your application
+        - name: Cloud Connectors
+          id: cloud-connectors
+          description: Simplifies connecting to services in cloud platforms
+          since: 1.2.0.RELEASE
         - name: Remote Shell
           id: remote-shell
           description: Support for CRaSH

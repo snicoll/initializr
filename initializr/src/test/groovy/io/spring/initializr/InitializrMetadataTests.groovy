@@ -98,6 +98,26 @@ class InitializrMetadataTests {
 	}
 
 	@Test
+	void invalidSinceVersion() {
+		def dependency = createDependency('web')
+		dependency.since = 'A.B.C'
+
+		thrown.expect(InvalidInitializrMetadataException)
+		thrown.expectMessage('A.B.C')
+		metadata.validateDependency(dependency)
+	}
+
+	@Test
+	void invalidUntilVersion() {
+		def dependency = createDependency('security')
+		dependency.until = 'A.B.C'
+
+		thrown.expect(InvalidInitializrMetadataException)
+		thrown.expectMessage('A.B.C')
+		metadata.validateDependency(dependency)
+	}
+
+	@Test
 	void invalidIdFormatTooManyColons() {
 		def dependency = createDependency('org.foo:bar:1.0:test:external')
 

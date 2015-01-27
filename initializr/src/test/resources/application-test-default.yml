@@ -24,9 +24,12 @@ initializr:
           groupId: org.acme
           artifactId: foo
           version: 1.3.5
+          since: 1.2.0.RELEASE
         - name: Bar
           id: org.acme:bar
           version: 2.1.0
+          since: 1.1.0.RC1
+          until: 1.1.0.RC3
   types:
     - name: Maven POM
       id: maven-build
