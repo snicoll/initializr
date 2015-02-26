@@ -16,8 +16,6 @@
 
 package io.spring.initializr
 
-import javax.annotation.PostConstruct
-
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import io.spring.initializr.mapper.InitializrMetadataJsonMapper
@@ -25,6 +23,8 @@ import io.spring.initializr.mapper.InitializrMetadataV21JsonMapper
 import io.spring.initializr.mapper.InitializrMetadataV2JsonMapper
 import io.spring.initializr.support.InvalidVersionException
 import io.spring.initializr.support.VersionRange
+
+import javax.annotation.PostConstruct
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
@@ -65,6 +65,37 @@ class InitializrMetadata {
 	final Env env = new Env()
 
 	private final Map<String, Dependency> indexedDependencies = [:]
+
+	/**
+	 * Add a dependency group. The group name and all the dependencies in it must be unique.
+	 *  
+	 * @param group the group to add
+	 */
+	void addDependencyGroup(DependencyGroup group) {
+		addDependencyGroupBefore('DOES_NOT_EXIST', group)
+	}
+
+	/**
+	 * Add a dependency group before the existing group with the name
+	 * provided. If one does not exist with that name it is added to the
+	 * end.
+	 *  
+	 * @param group the group to add
+	 */
+	void addDependencyGroupBefore(String name, DependencyGroup group) {
+		int index = dependencies.findIndexOf { dependency ->
+			dependency.name == name
+		}
+		index = index<0 ? dependencies.size() : index
+		dependencies.add(index, group)
+		group.content.each { Dependency dependency ->
+			validateDependency(dependency)
+			indexDependency(dependency.id, dependency)
+			for (String alias : dependency.aliases) {
+				indexDependency(alias, dependency)
+			}
+		}
+	}
 
 	/**
 	 * Return the {@link Dependency} with the specified id or {@code null} if
@@ -205,7 +236,7 @@ class InitializrMetadata {
 		if (id == null) {
 			if (!dependency.hasCoordinates()) {
 				throw new InvalidInitializrMetadataException(
-						'Invalid dependency, should have at least an id or a groupId/artifactId pair.')
+				'Invalid dependency, should have at least an id or a groupId/artifactId pair.')
 			}
 			dependency.generateId()
 		} else if (!dependency.hasCoordinates()) {
@@ -221,7 +252,7 @@ class InitializrMetadata {
 				}
 			} else {
 				throw new InvalidInitializrMetadataException(
-						"Invalid dependency, id should have the form groupId:artifactId[:version] but got $id")
+				"Invalid dependency, id should have the form groupId:artifactId[:version] but got $id")
 			}
 		}
 		if (dependency.versionRange) {
@@ -229,7 +260,7 @@ class InitializrMetadata {
 				VersionRange.parse(dependency.versionRange)
 			} catch (InvalidVersionException ex) {
 				throw new InvalidInitializrMetadataException("Invalid version range '$dependency.versionRange' for " +
-						"dependency with id '$dependency.id'")
+				"dependency with id '$dependency.id'")
 			}
 		}
 	}
@@ -287,7 +318,12 @@ class InitializrMetadata {
 		static final String SCOPE_RUNTIME = 'runtime'
 		static final String SCOPE_PROVIDED = 'provided'
 		static final String SCOPE_TEST = 'test'
-		static final List<String> SCOPE_ALL = [SCOPE_COMPILE, SCOPE_RUNTIME, SCOPE_PROVIDED, SCOPE_TEST]
+		static final List<String> SCOPE_ALL = [
+			SCOPE_COMPILE,
+			SCOPE_RUNTIME,
+			SCOPE_PROVIDED,
+			SCOPE_TEST
+		]
 
 		List<String> aliases = []
 
@@ -343,7 +379,7 @@ class InitializrMetadata {
 		def generateId() {
 			if (groupId == null || artifactId == null) {
 				throw new IllegalArgumentException(
-						"Could not generate id for $this: at least groupId and artifactId must be set.")
+				"Could not generate id for $this: at least groupId and artifactId must be set.")
 			}
 			StringBuilder sb = new StringBuilder()
 			sb.append(groupId).append(':').append(artifactId)
@@ -433,7 +469,10 @@ class InitializrMetadata {
 		 * The list of invalid application names. If such name is chosen or generated,
 		 * the {@link #fallbackApplicationName} should be used instead.
 		 */
-		List<String> invalidApplicationNames = ['SpringApplication', 'SpringBootApplication']
+		List<String> invalidApplicationNames = [
+			'SpringApplication',
+			'SpringBootApplication'
+		]
 
 		boolean forceSsl = true
 

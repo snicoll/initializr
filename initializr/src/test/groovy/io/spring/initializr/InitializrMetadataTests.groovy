@@ -16,12 +16,13 @@
 
 package io.spring.initializr
 
+import static org.junit.Assert.*
+import io.spring.initializr.InitializrMetadata.DependencyGroup
 import io.spring.initializr.test.InitializrMetadataBuilder
+
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-
-import static org.junit.Assert.*
 
 /**
  * @author Stephane Nicoll
@@ -311,6 +312,29 @@ class InitializrMetadataTests {
 	@Test
 	void generateApplicationNameAnotherInvalidApplicationName() {
 		assertEquals this.metadata.env.fallbackApplicationName, this.metadata.generateApplicationName('Spring')
+	}
+
+	@Test
+	void addDependencyGroup() {
+		assertEquals 0, this.metadata.dependencies.size()
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
+		group.name = 'Extra'
+		group.content.add(createDependency('org.foo:foo:1.0.0'))
+		this.metadata.addDependencyGroup(group)
+		assertEquals 1, this.metadata.dependencies.size()
+	}
+
+	@Test
+	void addDependencyGroupBefore() {
+		InitializrMetadata.DependencyGroup group = new InitializrMetadata.DependencyGroup()
+		group.name = 'Extra'
+		group.content.add(createDependency('org.foo:foo:1.0.0'))
+		this.metadata.addDependencyGroup(group)
+		group = new InitializrMetadata.DependencyGroup()
+		group.name = 'More'
+		group.content.add(createDependency('org.bar:1.0.0'))
+		this.metadata.addDependencyGroupBefore('Extra',group)
+		assertEquals 'More', this.metadata.dependencies[0].name
 	}
 
 	private static ProjectRequest doCreateProjectRequest(InitializrMetadata metadata) {
