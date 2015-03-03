@@ -16,6 +16,7 @@
 
 package io.spring.initializr.metadata
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.spring.initializr.InitializrConfiguration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -29,18 +30,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = 'initializr', ignoreUnknownFields = false)
 class InitializrProperties extends InitializrConfiguration {
 
+	@JsonIgnore
 	final List<DependencyGroup> dependencies = []
 
+	@JsonIgnore
 	final List<Type> types = []
 
+	@JsonIgnore
 	final List<DefaultMetadataElement> packagings = []
 
+	@JsonIgnore
 	final List<DefaultMetadataElement> javaVersions = []
 
+	@JsonIgnore
 	final List<DefaultMetadataElement> languages = []
 
+	@JsonIgnore
 	final List<DefaultMetadataElement> bootVersions = []
 
+	@JsonIgnore
 	final Defaults defaults = new Defaults()
 
 	static class Defaults {

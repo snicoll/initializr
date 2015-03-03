@@ -34,7 +34,59 @@ class InitializrMetadataBuilderTests {
 	@Test
 	void loadDefaultConfig() {
 		def bean = load(new ClassPathResource("application-test-default.yml"))
-		def metadata = new InitializrMetadataBuilder().fromConfiguration(bean).build()
+		def metadata = InitializrMetadataBuilder.fromInitializrProperties(bean).build()
+		assertDefaultConfig(metadata)
+	}
+
+
+	@Test
+	void mergeIdenticalConfig() {
+		def bean = load(new ClassPathResource("application-test-default.yml"))
+		def metadata = InitializrMetadataBuilder
+				.fromInitializrProperties(bean)
+				.withInitializrProperties(bean).build()
+		assertDefaultConfig(metadata)
+	}
+
+	@Test
+	void mergeConfig() {
+		def config = load(new ClassPathResource("application-test-default.yml"))
+		def customDefaultsConfig = load(new ClassPathResource("application-test-custom-defaults.yml"))
+		def metadata = InitializrMetadataBuilder
+				.fromInitializrProperties(config)
+				.withInitializrProperties(customDefaultsConfig).build()
+		assertDefaultConfig(metadata)
+		assertEquals 'org.foo', metadata.groupId.content
+		assertEquals 'foo-bar', metadata.artifactId.content
+		assertEquals '1.2.4-SNAPSHOT', metadata.version.content
+		assertEquals 'FooBar', metadata.name.content
+		assertEquals 'FooBar Project', metadata.description.content
+		assertEquals 'org.foo.demo', metadata.packageName.content
+	}
+
+	@Test
+	void mergeMetadata() {
+		def metadata = InitializrMetadataBuilder.create().withInitializrMetadata(
+				new ClassPathResource('metadata/test-meta-data-min.json')).build()
+		assertEquals(false, metadata.configuration.env.forceSsl)
+		assertEquals(1, metadata.dependencies.content.size())
+		Dependency dependency = metadata.dependencies.get('test')
+		assertNotNull(dependency)
+		assertEquals('org.springframework.boot', dependency.groupId)
+		assertEquals(1, metadata.types.content.size())
+		assertEquals(2, metadata.bootVersions.content.size())
+		assertEquals(2, metadata.packagings.content.size())
+		assertEquals(1, metadata.javaVersions.content.size())
+		assertEquals(2, metadata.languages.content.size())
+		assertEquals('meta-data-merge', metadata.name.content)
+		assertEquals('Demo project for meta-data merge', metadata.description.content)
+		assertEquals('org.acme', metadata.groupId.content)
+		assertEquals('meta-data', metadata.artifactId.content)
+		assertEquals('1.0.0-SNAPSHOT', metadata.version.content)
+		assertEquals('org.acme.demo', metadata.packageName.content)
+	}
+
+	private static assertDefaultConfig(metadata) {
 		assertNotNull metadata
 		assertEquals("Wrong number of dependencies", 9, metadata.dependencies.all.size())
 		assertEquals("Wrong number of dependency group", 2, metadata.dependencies.content.size())
@@ -46,7 +98,7 @@ class InitializrMetadataBuilderTests {
 		def group = new DependencyGroup(name: 'Extra')
 		def dependency = new Dependency(id: 'com.foo:foo:1.0.0')
 		group.content << dependency
-		def metadata = new InitializrMetadataBuilder().withCustomizer(new InitializrMetadataCustomizer() {
+		def metadata = InitializrMetadataBuilder.create().withCustomizer(new InitializrMetadataCustomizer() {
 			@Override
 			void customize(InitializrMetadata metadata) {
 				metadata.dependencies.content << group
