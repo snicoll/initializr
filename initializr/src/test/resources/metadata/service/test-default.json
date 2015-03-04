@@ -1,8 +1,9 @@
 {
   "artifactId": {
     "content": "demo",
-    "description": null,
+    "description": "project coordinates (infer archive name)",
     "id": "artifactId",
+    "title": "Artifact",
     "type": "TEXT"
   },
   "bootVersions": {
@@ -23,22 +24,21 @@
         "name": "1.0.2"
       }
     ],
-    "description": null,
+    "description": "spring boot version",
     "id": "bootVersion",
+    "title": "Spring Boot Version",
     "type": "SINGLE_SELECT"
   },
-  "configuration": {
-    "env": {
-      "artifactRepository": "https://repo.spring.io/release/",
-      "fallbackApplicationName": "Application",
-      "forceSsl": true,
-      "invalidApplicationNames": [
-        "SpringApplication",
-        "SpringBootApplication"
-      ],
-      "springBootMetadataUrl": "https://spring.io/project_metadata/spring-boot"
-    }
-  },
+  "configuration": {"env": {
+    "artifactRepository": "https://repo.spring.io/release/",
+    "fallbackApplicationName": "Application",
+    "forceSsl": true,
+    "invalidApplicationNames": [
+      "SpringApplication",
+      "SpringBootApplication"
+    ],
+    "springBootMetadataUrl": "https://spring.io/project_metadata/spring-boot"
+  }},
   "dependencies": {
     "content": [
       {
@@ -148,20 +148,23 @@
         "name": "Other"
       }
     ],
-    "description": null,
+    "description": "dependency identifiers (comma-separated)",
     "id": "dependencies",
+    "title": "Project dependencies",
     "type": "HIERARCHICAL_MULTI_SELECT"
   },
   "description": {
     "content": "Demo project for Spring Boot",
-    "description": null,
+    "description": "project description",
     "id": "description",
+    "title": "Description",
     "type": "TEXT"
   },
   "groupId": {
     "content": "org.test",
-    "description": null,
+    "description": "project coordinates",
     "id": "groupId",
+    "title": "Group",
     "type": "TEXT"
   },
   "javaVersions": {
@@ -182,8 +185,9 @@
         "name": "1.8"
       }
     ],
-    "description": null,
+    "description": "language level",
     "id": "javaVersion",
+    "title": "Java Version",
     "type": "SINGLE_SELECT"
   },
   "languages": {
@@ -199,20 +203,23 @@
         "name": "Java"
       }
     ],
-    "description": null,
+    "description": "programming language",
     "id": "language",
+    "title": "Language",
     "type": "SINGLE_SELECT"
   },
   "name": {
     "content": "demo",
-    "description": null,
+    "description": "project name (infer application name)",
     "id": "name",
+    "title": "Name",
     "type": "TEXT"
   },
   "packageName": {
     "content": "demo",
-    "description": null,
+    "description": "root package",
     "id": "packageName",
+    "title": "Package Name",
     "type": "TEXT"
   },
   "packagings": {
@@ -228,8 +235,9 @@
         "name": "War"
       }
     ],
-    "description": null,
+    "description": "project packaging",
     "id": "packaging",
+    "title": "Packaging",
     "type": "SINGLE_SELECT"
   },
   "types": {
@@ -283,14 +291,16 @@
         }
       }
     ],
-    "description": null,
+    "description": "project type",
     "id": "type",
+    "title": "Type",
     "type": "ACTION"
   },
   "version": {
     "content": "0.0.1-SNAPSHOT",
-    "description": null,
+    "description": "project version",
     "id": "version",
+    "title": "Version",
     "type": "TEXT"
   }
 }
