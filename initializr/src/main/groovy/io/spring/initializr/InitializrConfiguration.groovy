@@ -16,6 +16,8 @@
 
 package io.spring.initializr
 
+import groovy.transform.ToString
+
 /**
  * Various configuration options used by the service.
  *
@@ -113,6 +115,11 @@ class InitializrConfiguration {
 		 */
 		boolean forceSsl = true
 
+		/**
+		 * The {@link BillOfMaterials} that are referenced in this instance.
+		 */
+		Map<String, BillOfMaterials> boms = [:]
+
 		void setArtifactRepository(String artifactRepository) {
 			if (!artifactRepository.endsWith('/')) {
 				artifactRepository = artifactRepository + '/'
@@ -129,4 +136,19 @@ class InitializrConfiguration {
 		}
 
 	}
+
+	/**
+	 * Define a Bill Of Materials to be represented in the generated project
+	 * if a dependency refers to it.
+	 */
+	@ToString(ignoreNulls = true, includePackage = false)
+	static class BillOfMaterials {
+
+		String id
+		String groupId
+		String artifactId
+		String version
+
+	}
+
 }

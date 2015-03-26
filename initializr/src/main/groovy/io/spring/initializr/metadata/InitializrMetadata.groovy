@@ -86,6 +86,14 @@ class InitializrMetadata {
 	 */
 	void validate() {
 		dependencies.validate()
+
+		for (Dependency dependency : dependencies.all) {
+			def boms = configuration.env.boms
+			if (dependency.bom && !boms[dependency.bom]) {
+				throw new InvalidInitializrMetadataException("Dependency $dependency " +
+						"defines an invalid BOM id $dependency.bom, available boms $boms")
+			}
+		}
 	}
 
 	/**
