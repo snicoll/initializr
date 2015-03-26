@@ -9,15 +9,18 @@ buildscript {
 <% } %>
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:\${springBootVersion}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:\${springBootVersion}") <% if (!bootOneThreeAvailable) { %>
+		classpath("io.spring.gradle:dependency-management-plugin:0.4.1.RELEASE")<% } %>
     }
 }
 
 apply plugin: '${language}'<% if (packaging=='war') {  %>
 apply plugin: 'eclipse-wtp'<% } else { %>
 apply plugin: 'eclipse'<% } %>
-apply plugin: 'idea'
-apply plugin: 'spring-boot' <% if (packaging=='war') {  %>
+apply plugin: 'idea' <% if (bootOneThreeAvailable) { %>
+apply plugin: 'org.springframework.boot.spring-boot' <% } else { %>
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'<% } %><% if (packaging=='war') {  %>
 apply plugin: 'war'
 <% } %>
 
