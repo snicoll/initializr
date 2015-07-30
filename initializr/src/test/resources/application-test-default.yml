@@ -2,6 +2,10 @@ info:
   spring-boot:
     version: 1.1.4.RELEASE
 
+# Should not be here (temporary workaround)
+endpoints:
+  links:
+    enabled: false
 
 initializr:
   dependencies:
@@ -107,3 +111,4 @@ initializr:
     - name: 1.0.2
       id: 1.0.2.RELEASE
       default: false
+
