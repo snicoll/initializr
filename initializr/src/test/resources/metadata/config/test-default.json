@@ -33,6 +33,7 @@
     "artifactRepository": "https://repo.spring.io/release/",
     "fallbackApplicationName": "Application",
     "forceSsl": true,
+    "kotlinVersion": null,
     "invalidApplicationNames": [
       "SpringApplication",
       "SpringBootApplication"
@@ -229,6 +230,11 @@
         "default": true,
         "id": "java",
         "name": "Java"
+      },
+      {
+        "default": false,
+        "id": "kotlin",
+        "name": "Kotlin"
       }
     ],
     "description": "programming language",
