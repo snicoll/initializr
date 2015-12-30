@@ -150,11 +150,6 @@ class InitializrConfiguration {
 		boolean forceSsl = true
 
 		/**
-		 * Kotlin version
-		 */
-		String kotlinVersion
-
-		/**
 		 * The "BillOfMaterials" that are referenced in this instance, identified by an
 		 * arbitrary identifier that can be used in the dependencies definition.
 		 */
@@ -165,6 +160,11 @@ class InitializrConfiguration {
 		 * an arbitrary identifier that can be used in the dependencies definition.
 		 */
 		final Map<String, Repository> repositories = [:]
+
+		/**
+		 * Kotlin-specific settings.
+		 */
+		final Kotlin kotlin = new Kotlin()
 
 		Env() {
 			repositories['spring-snapshots'] = new Repository(name: 'Spring Snapshots',
@@ -192,7 +192,7 @@ class InitializrConfiguration {
 			fallbackApplicationName = other.fallbackApplicationName
 			invalidApplicationNames = other.invalidApplicationNames
 			forceSsl = other.forceSsl
-			kotlinVersion = other.kotlinVersion
+			kotlin.version = other.kotlin.version
 			other.boms.each { id, bom ->
 				if (!boms[id]) {
 					boms[id] = bom
@@ -203,6 +203,14 @@ class InitializrConfiguration {
 					repositories[id] = repo
 				}
 			}
+		}
+
+		static class Kotlin {
+
+			/**
+			 * Kotlin version to use.
+			 */
+			String version
 		}
 
 	}

@@ -32,6 +32,7 @@ import static io.spring.initializr.util.GroovyTemplate.template
  *
  * @author Dave Syer
  * @author Stephane Nicoll
+ * @author Sebastien Deleuze
  * @since 1.0
  */
 @Slf4j
@@ -174,7 +175,9 @@ class ProjectGenerator {
 	protected Map initializeModel(ProjectRequest request) {
 		Assert.notNull request.bootVersion, 'boot version must not be null'
 		def model = [:]
-		request.resolve(metadataProvider.get())
+		def metadata = metadataProvider.get()
+
+		request.resolve(metadata)
 
 		// request resolved so we can log what has been requested
 		def dependencies = request.resolvedDependencies
@@ -187,6 +190,9 @@ class ProjectGenerator {
 		model['runtimeDependencies'] = filterDependencies(dependencies, Dependency.SCOPE_RUNTIME)
 		model['providedDependencies'] = filterDependencies(dependencies, Dependency.SCOPE_PROVIDED)
 		model['testDependencies'] = filterDependencies(dependencies, Dependency.SCOPE_TEST)
+
+		// Add kotlinVersion
+		model['kotlinVersion'] = metadata.configuration.env.kotlin.version
 
 		// @SpringBootApplication available as from 1.2.0.RC1
 		model['useSpringBootApplication'] = VERSION_1_2_0_RC1

@@ -31,7 +31,8 @@ initializr:
           - versionRange: 1.3.2.BUILD-SNAPSHOT
             version: Brixton.BUILD-SNAPSHOT
             repositories: spring-snapshots,spring-milestones
-    kotlinVersion: 1.0.0-beta-2423        
+    kotlin:
+      version: 1.0.0-beta-2423
   dependencies:
     - name: Core
       content:
