@@ -12,7 +12,7 @@ import io.spring.initializr.web.project.LegacyStsController
 @Grab('io.spring.initializr:initializr-actuator:1.0.0.BUILD-SNAPSHOT')
 @Grab('io.spring.initializr:initializr-web:1.0.0.BUILD-SNAPSHOT')
 @Grab('spring-boot-starter-web')
-@Grab('spring-boot-starter-redis')
+@Grab('spring-boot-starter-data-redis')
 class InitializerService {
 
 	@Bean
