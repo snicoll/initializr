@@ -213,6 +213,7 @@ class ProjectGenerator {
 		if (isMavenBuild(request)) {
 			ParentPom parentPom = metadata.configuration.env.maven.resolveParentPom(request.bootVersion)
 			if (parentPom.includeSpringBootBom && !request.boms['spring-boot']) {
+				request.buildProperties.versions['spring-boot.version'] = { request.bootVersion }
 				request.boms['spring-boot'] = metadata.createSpringBootBom('${spring-boot.version}')
 			}
 
