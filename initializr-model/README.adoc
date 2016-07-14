@@ -1,0 +1,38 @@
+= Initializr Model Refactoring
+
+This page holds design note about a future refactoring of the generator model. The main
+purposes of this refactoring are:
+
+* Provide hook points to alter the model with well-defined boundaries and responsibilities
+* Ease the generation of project resources by moving logic outside of the templates
+
+
+== `ProjectRequest` vs. `ProjectModel`
+
+The first move is probably to concretely split the incoming (web) request to the model that
+is going to be used to generate the project. They can be as many incarnations as needed of
+the request as long as they translate to a `ProjectModel`.
+
+`ProjectModel` is more rich and the one that should offer most of the customization.
+
+== Customizations hookpoint
+
+The following customization hook-points are possible:
+
+* `ProjectRequestPostProcessor`: any `@Bean` that implements this interface will be
+called in order to alter the `ProjectRequest`. the request is very _raw_ (user input
+from the web request typically) so any kind of modification is allowed but a very
+low-level model (no high-level object)
+* `ProjectModelCustomizer`: manipulates a high-level object model where certain
+attributes are constrained (typically the language and the build system).
+
+
+`ProjectModelCustomizer` should allow to delete and add dependencies with an immediate
+refresh of the internal model. Typically, the following has to be foreseen:
+
+* If the `bootVersion` changes, all the dependency management should be rescanned as
+some dependencies may not be available anymore. Note that automated mapping (e.g.
+`redis` to `data-redis`) should be handled transparently
+* If a dependency is removed that brought a Bill Of Materials, said `bom` should be
+removed from the model as well. Same for repositories
+

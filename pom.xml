@@ -46,6 +46,7 @@
 	<modules>
 		<module>initializr-actuator</module>
 		<module>initializr-generator</module>
+		<module>initializr-model</module>
 		<module>initializr-web</module>
 	</modules>
 
