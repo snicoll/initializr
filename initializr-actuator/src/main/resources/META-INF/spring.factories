@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.spring.initializr.actuate.autoconfigure.InitializrInfoAutoConfiguration,\
 io.spring.initializr.actuate.autoconfigure.InitializrStatsAutoConfiguration,\
 io.spring.initializr.actuate.autoconfigure.InitializrMetricsConfiguration
