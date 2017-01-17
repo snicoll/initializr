@@ -428,6 +428,13 @@ initializr:
             - versionRange: "1.4.0.RELEASE"
               groupId: org.springframework.cloud
               artifactId: spring-cloud-starter-task
+        - name: Cloud Deployer Cloud Foundry
+          id: cloud-deployer-cf
+          bom:
+          description: Deploy applications to Cloud Foundry based on the Spring Cloud Deployer SPI
+          groupId: org.springframework.cloud
+          artifactId: spring-cloud-deployer-cloudfoundry
+          version: 1.0.0.RELEASE
     - name: Cloud Config
       bom: cloud-bom
       versionRange: 1.2.3.RELEASE
