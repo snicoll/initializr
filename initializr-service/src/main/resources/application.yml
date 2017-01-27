@@ -100,6 +100,12 @@ initializr:
           id: security
           description: Secure your application via spring-security
           weight: 100
+          links:
+            - rel: guide
+              href: https://spring.io/guides/gs/securing-web/
+              description: Securing a Web Application
+            - rel: reference
+              href: http://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-security
         - name: AOP
           id: aop
           description: Aspect-oriented programming including spring-aop and AspectJ
@@ -119,6 +125,12 @@ initializr:
           id: cache
           description: Spring's Cache abstraction
           versionRange: 1.3.0.M1
+          links:
+            - rel: guide
+              href: https://spring.io/guides/gs/caching/
+              description: Caching Data with Spring
+            - rel: reference
+              href: http://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-caching
         - name: DevTools
           id: devtools
           groupId: org.springframework.boot
@@ -171,6 +183,18 @@ initializr:
           weight: 100
           facets:
             - web
+          links:
+            - rel: guide
+              href: https://spring.io/guides/gs/rest-service/
+              description: Building a RESTful Web Service
+            - rel: reference
+              href: http://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-developing-web-applications
+            - rel: guide
+              href: https://spring.io/guides/gs/serving-web-content/
+              description: Serving Web Content with Spring MVC
+            - rel: guide
+              href: https://spring.io/guides/tutorials/bookmarks/
+              description: Building REST services with Spring
         - name: Websocket
           id: websocket
           description: Websocket development with SockJS and STOMP
