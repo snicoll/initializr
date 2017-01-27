@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 the original author or authors.
+ * Copyright 2012-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,58 @@
 
 package io.spring.initializr.metadata
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import groovy.transform.ToString
+
 /**
- * @author Dave Syer
+ * Meta-data for a link. Each link has a "relation" that potentially attaches a strong
+ * semantic to the nature of the link.
  *
+ * @author Dave Syer
+ * @author Stephane Nicoll
  */
+@ToString(ignoreNulls = true, includePackage = false)
 class Link {
-	
-	String id
-	
-	URL url
-	
+
+	/**
+	 * The relation of the link.
+	 */
+	String rel;
+
+	/**
+	 * The URI the link is pointing to.
+	 */
+	String href
+
+	/**
+	 * Specify if the URI is templated.
+	 */
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+	boolean templated
+
+	/**
+	 * A description of the link.
+	 */
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	String description
 
+	void setHref(String href) {
+		this.href = href
+
+	}
+
+	void resolve() {
+		if (!rel) {
+			throw new InvalidInitializrMetadataException(
+					"Invalid link $this: rel attribute is mandatory")
+		}
+		if (!href) {
+			throw new InvalidInitializrMetadataException(
+					"Invalid link $this: href attribute is mandatory")
+		}
+	}
+
+	protected void setTemplated(boolean templated) {
+		this.templated = templated
+	}
 }
