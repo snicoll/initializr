@@ -37,6 +37,8 @@ import io.spring.initializr.util.VersionRange
 @AutoClone(style = AutoCloneStyle.COPY_CONSTRUCTOR)
 class Dependency extends MetadataElement {
 
+	private static final String BOOT_VERSION_TEMPLATE = '{bootVersion}'
+
 	static final String SCOPE_COMPILE = 'compile'
 	static final String SCOPE_COMPILE_ONLY = 'compileOnly'
 	static final String SCOPE_RUNTIME = 'runtime'
@@ -91,8 +93,6 @@ class Dependency extends MetadataElement {
 
 	String repository
 
-	List<Link> links = []
-
 	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	int weight
 
@@ -103,6 +103,8 @@ class Dependency extends MetadataElement {
 	boolean starter = true
 
 	List<String> keywords = []
+
+	List<Link> links = []
 
 	void setScope(String scope) {
 		if (!SCOPE_ALL.contains(scope)) {
@@ -161,6 +163,12 @@ class Dependency extends MetadataElement {
 			} else {
 				throw new InvalidInitializrMetadataException(
 						"Invalid dependency, id should have the form groupId:artifactId[:version] but got $id")
+			}
+		}
+		links.forEach { l ->
+			l.resolve()
+			if (l.href.contains(BOOT_VERSION_TEMPLATE)) {
+				l.templated = true
 			}
 		}
 		updateVersionRanges(VersionParser.DEFAULT)

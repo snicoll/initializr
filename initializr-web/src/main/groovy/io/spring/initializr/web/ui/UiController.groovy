@@ -22,6 +22,7 @@ import groovy.json.JsonBuilder
 import io.spring.initializr.metadata.Dependency
 import io.spring.initializr.metadata.InitializrMetadataProvider
 import io.spring.initializr.util.Version
+import io.spring.initializr.web.mapper.LinkMapper
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -83,8 +84,7 @@ class UiController {
 			result.description = d.description
 		}
 		if (d.links) {
-			result.url = d.links[0].url
-			result.links = d.links
+			result._links = LinkMapper.mapLinks(d.links)
 		}
 		if (d.weight) {
 			result.weight = d.weight

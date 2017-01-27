@@ -4,7 +4,16 @@
       "id": "web",
       "name": "Web",
       "description": "Web dependency description",
-      "group": "Core"
+      "group": "Core",
+      "_links": {
+        "guide": {
+          "href": "https://example.com/guide",
+          "title": "Building a RESTful Web Service"
+        },
+        "reference": {
+          "href": "https://example.com/doc"
+        }
+      }
     },
     {
       "id": "security",
@@ -22,7 +31,22 @@
       "name": "Foo",
       "group": "Other",
       "keywords": "thefoo,dafoo",
-      "weight": 42
+      "weight": 42,
+      "_links": {
+        "guide": [
+          {
+            "href": "https://example.com/guide1"
+          },
+          {
+            "href": "https://example.com/guide2",
+            "title": "Some guide for foo"
+          }
+        ],
+        "reference": {
+          "href": "https://example.com/{bootVersion}/doc",
+          "templated": true
+        }
+      }
     },
     {
       "id": "org.acme:bar",
