@@ -26,6 +26,16 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -178,7 +188,7 @@
 								</goals>
 								<phase>prepare-package</phase>
 								<configuration>
-									<epubCustomization>${basedir}/src/main/docbook/xsl/epub.xsl</epubCustomization>
+									<epub3Customization>${basedir}/src/main/docbook/xsl/epub.xsl</epub3Customization>
 									<targetDirectory>${basedir}/target/docbook/epub</targetDirectory>
 									<postProcess>
 										<copy todir="${basedir}/target/contents/reference/epub">
