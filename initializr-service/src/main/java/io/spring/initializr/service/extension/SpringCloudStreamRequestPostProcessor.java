@@ -33,37 +33,52 @@ public class SpringCloudStreamRequestPostProcessor
 
 	private final Dependency springCloudStreamKafka;
 
-	private final Dependency springCloudStreamReactive;
+	private final Dependency springCloudStreamRabbit;
+
+	private final Dependency streamTest;
 
 	public SpringCloudStreamRequestPostProcessor() {
 		this.springCloudStreamKafka = Dependency.withId("cloud-stream-binder-kafka",
 				"org.springframework.cloud", "spring-cloud-stream-binder-kafka");
-		this.springCloudStreamReactive = Dependency.withId("cloud-stream-reactive",
-				"org.springframework.cloud", "spring-cloud-stream-reactive");
+		this.springCloudStreamRabbit = Dependency.withId("cloud-stream-binder-rabbit",
+				"org.springframework.cloud", "spring-cloud-stream-binder-rabbit");
+		this.streamTest = Dependency.withId("stream-test", "org.springframework.cloud",
+				"spring-cloud-stream-test-support");
+		this.streamTest.setScope(Dependency.SCOPE_TEST);
 	}
 
 	@Override
 	public void postProcessAfterResolution(ProjectRequest request,
 			InitializrMetadata metadata) {
-		Dependency springCloudStreamRabbit = getDependency(request,
-				"cloud-stream");
-		Dependency reactiveSpringCloudStreamRabbit = getDependency(request,
-				"reactive-cloud-stream");
+		Dependency springCloudStream = getDependency(request, "cloud-stream");
+		boolean hasOtherStream = hasDependencies(request, "reactive-cloud-stream",
+				"cloud-turbine-stream", "cloud-bus");
+		boolean hasReactiveStream = hasDependencies(request, "reactive-cloud-stream");
 		boolean hasKafka = hasDependencies(request, "kafka");
-		if (springCloudStreamRabbit != null && hasKafka) {
-			request.getResolvedDependencies().remove(springCloudStreamRabbit);
-			request.getResolvedDependencies().add(this.springCloudStreamKafka);
-		}
-		if (reactiveSpringCloudStreamRabbit != null) {
-			request.getResolvedDependencies().add(this.springCloudStreamReactive);
+		boolean hasRabbit = hasDependencies(request, "rabbit");
+		if (springCloudStream != null) {
 			if (hasKafka) {
-				request.getResolvedDependencies().remove(reactiveSpringCloudStreamRabbit);
+				request.getResolvedDependencies().remove(springCloudStream);
 				request.getResolvedDependencies().add(this.springCloudStreamKafka);
+			}
+			if (hasRabbit) {
+				request.getResolvedDependencies().remove(springCloudStream);
+				request.getResolvedDependencies().add(this.springCloudStreamRabbit);
+			}
+		}
+		if (hasReactiveStream || springCloudStream != null) {
+			request.getResolvedDependencies().add(this.streamTest);
+		}
+		if (hasOtherStream) {
+			if (hasKafka) {
+				request.getResolvedDependencies().add(this.springCloudStreamKafka);
+			}
+			if (hasRabbit) {
+				request.getResolvedDependencies().add(this.springCloudStreamRabbit);
 			}
 		}
 
 	}
-
 
 	// TODO: share this
 
@@ -82,4 +97,3 @@ public class SpringCloudStreamRequestPostProcessor
 	}
 
 }
-
