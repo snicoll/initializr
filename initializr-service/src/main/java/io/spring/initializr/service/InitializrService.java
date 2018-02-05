@@ -46,7 +46,6 @@ public class InitializrService {
 	}
 
 	@Bean
-	@SuppressWarnings("deprecation")
 	public LegacyStsController legacyStsController(InitializrMetadataProvider metadataProvider,
 			ResourceUrlProvider resourceUrlProvider) {
 		return new LegacyStsController(metadataProvider, resourceUrlProvider);

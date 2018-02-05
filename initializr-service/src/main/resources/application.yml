@@ -710,6 +710,9 @@ initializr:
         - name: RabbitMQ
           id: amqp
           description: Advanced Message Queuing Protocol via spring-rabbit
+          keywords:
+          - stream
+          - messaging
           links:
             - rel: guide
               href: https://spring.io/guides/gs/messaging-rabbitmq/
@@ -719,11 +722,14 @@ initializr:
         - name: Kafka
           id: kafka
           weight: 100
-          description: Kafka messaging support using Spring Kafka
+          description: Kafka messaging support using Sring Kafka
           versionRange: 1.5.0.RC1
           groupId: org.springframework.kafka
           artifactId: spring-kafka
           starter: false
+          keywords:
+          - stream
+          - messaging
           links:
             - rel: reference
               href: http://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/#boot-features-kafka
@@ -783,7 +789,7 @@ initializr:
           artifactId: spring-cloud-starter-oauth2
         - name: Cloud Task
           id: cloud-task
-          description: Task result tracking along with integration with batch and streams
+          description: Task result tracking and integration with Spring Batch
           groupId: org.springframework.cloud
           artifactId: spring-cloud-starter-task
           versionRange: "1.3.0.RELEASE"
@@ -982,7 +988,7 @@ initializr:
           artifactId: spring-cloud-starter-sleuth
         - name: Zipkin Client
           id: cloud-starter-zipkin
-          description: Distributed tracing with an existing Zipkin installation and spring-cloud-sleuth-zipkin. Alternatively, consider Sleuth Stream.
+          description: Distributed tracing with an existing Zipkin installation and spring-cloud-sleuth-zipkin.
           groupId: org.springframework.cloud
           artifactId: spring-cloud-starter-zipkin
         - name: Sleuth Stream
@@ -1011,28 +1017,24 @@ initializr:
       content:
         - name: Cloud Bus
           id: cloud-bus
-          aliases:
-            - cloud-bus-amqp
-          description: A simple control bus defaulting to RabbitMQ
+          description: A simple control bus using Spring Cloud Stream (requires a binder, e.g. Kafka or RabbitMQ)
           groupId: org.springframework.cloud
-          artifactId: spring-cloud-starter-bus-amqp
+          artifactId: spring-cloud-bus
         - name: Cloud Stream
           id: cloud-stream
-          aliases:
-            - cloud-stream-binder-rabbit
-          description: Messaging microservices with Spring Cloud Stream and RabbitMQ
+          description: Messaging microservices with Spring Cloud Stream (requires a binder, e.g. Kafka or RabbitMQ)
           versionRange: 1.3.0.RELEASE
           groupId: org.springframework.cloud
-          artifactId: spring-cloud-starter-stream-rabbit
+          artifactId: spring-cloud-stream
         - name: Reactive Cloud Stream
           id: reactive-cloud-stream
-          description: Reactive messaging microservices with Spring Cloud Stream and RabbitMQ
+          description: Reactive messaging microservices with Spring Cloud Stream
           versionRange: 1.3.0.RELEASE
           groupId: org.springframework.cloud
-          artifactId: spring-cloud-starter-stream-rabbit
-        - name: Cloud Kafka Streams
+          artifactId: spring-cloud-stream-reactive
+        - name: Cloud Stream Kafka Streams
           id: cloud-stream-binder-kafka-streams
-          description: Stream processing microservices with Spring Cloud Stream and Kafka Streams API
+          description: Stream processing microservices with Spring Cloud Stream and Kafka Streams API (not needed for vanilla Spring Cloud Stream with Kafka)
           versionRange: 1.5.7.RELEASE
           groupId: org.springframework.cloud
           artifactId: spring-cloud-stream-binder-kstream
