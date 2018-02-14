@@ -47,6 +47,10 @@ public class SpringCloudMessagingRequestPostProcessor
 			"cloud-stream-binder-rabbit", "org.springframework.cloud",
 			"spring-cloud-stream-binder-rabbit");
 
+	static final Dependency SCS_TEST = Dependency.withId("cloud-stream-test",
+			"org.springframework.cloud", "spring-cloud-stream-test-support", null,
+			Dependency.SCOPE_TEST);
+
 	@Override
 	public void postProcessAfterResolution(ProjectRequest request,
 			InitializrMetadata metadata) {
@@ -70,6 +74,7 @@ public class SpringCloudMessagingRequestPostProcessor
 			if (hasDependencies(request, "kafka-streams")) {
 				request.getResolvedDependencies().add(KAFKA_STREAMS_BINDER);
 			}
+			request.getResolvedDependencies().add(SCS_TEST);
 		}
 	}
 
