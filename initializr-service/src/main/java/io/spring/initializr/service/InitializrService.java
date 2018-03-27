@@ -16,11 +16,14 @@
 
 package io.spring.initializr.service;
 
+import java.io.StringWriter;
 import java.util.concurrent.Executor;
 
 import io.spring.initializr.metadata.InitializrMetadataProvider;
+import io.spring.initializr.service.metadata.DependenciesCsvExporter;
 import io.spring.initializr.web.project.LegacyStsController;
 
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -68,6 +71,15 @@ public class InitializrService {
 			return executor;
 		}
 
+	}
+
+	@Bean
+	public ApplicationRunner csvExport(DependenciesCsvExporter csvExporter) {
+		return arguments -> {
+			StringWriter writer = new StringWriter();
+			csvExporter.writeTo(writer);
+			System.out.println(writer.toString());
+		};
 	}
 
 }
