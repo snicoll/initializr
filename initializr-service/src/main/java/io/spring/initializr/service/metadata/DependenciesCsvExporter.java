@@ -121,8 +121,8 @@ public class DependenciesCsvExporter {
 
 	private String indexQuery(String dependencyId) {
 		return String.format(QUERY_TEMPLATE,
-				LocalDate.of(2017, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-				LocalDate.of(2017, 12, 31).plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+				LocalDate.of(2018, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+				LocalDate.of(2018, 10, 31).plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
 				dependencyId);
 	}
 
