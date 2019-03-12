@@ -62,7 +62,7 @@ public class DependenciesCsvExporter {
 			+ "        \"bool\" : {\n"
 			+ "          \"must\" : {\n"
 			+ "            \"terms\" : {\n"
-			+ "              \"dependencies\" : [ \"%s\" ]\n"
+			+ "              \"dependencies.values\" : [ \"%s\" ]\n"
 			+ "            }\n"
 			+ "          }\n"
 			+ "        }\n"
@@ -101,12 +101,12 @@ public class DependenciesCsvExporter {
 
 	private DependencyEntry toDependencyEntry(String groupName, Dependency dependency) {
 		return new DependencyEntry(dependency.getId(), dependency.getName(), groupName,
-				null, dependency.getDescription(), downloadCount(dependency.getId()));
+				null, dependency.getDescription(), downloadCount(dependency.getId(), 2016),downloadCount(dependency.getId(), 2017),downloadCount(dependency.getId(), 2018));
 	}
 
-	private long downloadCount(String dependencyId) {
+	private long downloadCount(String dependencyId, int year) {
 		logger.debug("Retrieving download stats for " + dependencyId);
-		Search query = new Search.Builder(indexQuery(dependencyId))
+		Search query = new Search.Builder(indexQuery(dependencyId, year))
 				.addIndex("initializr-archive")
 				.build();
 		try {
@@ -119,10 +119,10 @@ public class DependenciesCsvExporter {
 		return 0L;
 	}
 
-	private String indexQuery(String dependencyId) {
+	private String indexQuery(String dependencyId, int year) {
 		return String.format(QUERY_TEMPLATE,
-				LocalDate.of(2018, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
-				LocalDate.of(2018, 10, 31).plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+				LocalDate.of(year, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+				LocalDate.of(year, 10, 31).plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
 				dependencyId);
 	}
 

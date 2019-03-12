@@ -21,14 +21,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 class DependencyEntry implements Comparable<DependencyEntry> {
 
 	static CsvSchema csvSchema() {
-		return CsvSchema.builder()
-				.addColumn("id")
-				.addColumn("name")
-				.addColumn("group")
-				.addColumn("category")
-				.addColumn("description")
-				.addColumn("count", CsvSchema.ColumnType.NUMBER)
-				.build();
+		return CsvSchema.builder().addColumn("id").addColumn("name").addColumn("group")
+				.addColumn("category").addColumn("description")
+				.addColumn("count2016", CsvSchema.ColumnType.NUMBER)
+				.addColumn("count2017", CsvSchema.ColumnType.NUMBER)
+				.addColumn("count2018", CsvSchema.ColumnType.NUMBER).build();
 	}
 
 	private String id;
@@ -41,16 +38,22 @@ class DependencyEntry implements Comparable<DependencyEntry> {
 
 	private String description;
 
-	private long count;
+	private long count2016;
+
+	private long count2017;
+
+	private long count2018;
 
 	public DependencyEntry(String id, String name, String group, String category,
-			String description, long count) {
+			String description, long count2016, long count2017, long count2018) {
 		this.id = clean(id);
 		this.name = clean(name);
 		this.group = clean(group);
 		this.category = clean(category);
 		this.description = clean(description);
-		this.count = count;
+		this.count2016 = count2016;
+		this.count2017 = count2017;
+		this.count2018 = count2018;
 	}
 
 	private static String clean(String value) {
@@ -100,12 +103,28 @@ class DependencyEntry implements Comparable<DependencyEntry> {
 		this.description = description;
 	}
 
-	public long getCount() {
-		return this.count;
+	public long getCount2016() {
+		return this.count2016;
 	}
 
-	public void setCount(long count) {
-		this.count = count;
+	public void setCount2016(long count2016) {
+		this.count2016 = count2016;
+	}
+
+	public long getCount2017() {
+		return this.count2017;
+	}
+
+	public void setCount2017(long count2017) {
+		this.count2017 = count2017;
+	}
+
+	public long getCount2018() {
+		return this.count2018;
+	}
+
+	public void setCount2018(long count2018) {
+		this.count2018 = count2018;
 	}
 
 	@Override
