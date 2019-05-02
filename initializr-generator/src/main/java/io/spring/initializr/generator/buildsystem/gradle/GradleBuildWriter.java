@@ -116,9 +116,11 @@ public abstract class GradleBuildWriter {
 		}
 		Map<String, String> allProperties = new LinkedHashMap<>(build.getExt());
 		build.getVersionProperties().entrySet().forEach((entry) -> allProperties
-				.put(getVersionPropertyKey(entry), "'" + entry.getValue() + "'"));
+				.put(getVersionPropertyKey(entry), versionAsString(entry.getValue())));
 		writeExtraProperties(writer, allProperties);
 	}
+
+	protected abstract String versionAsString(String version);
 
 	protected abstract void writeExtraProperties(IndentingWriter writer,
 			Map<String, String> allProperties);
