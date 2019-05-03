@@ -27,13 +27,12 @@ import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 
 /**
- * {@link ProjectContributor} for the project's {@code settings.gradle}
- * {@code settings.gradle.kts} or file. A subclass exists for each of the DSLs.
+ * {@link ProjectContributor} for the project's settings file.
  *
  * @author Andy Wilkinson
  * @author Jean-Baptiste Nizet
  */
-abstract class SettingsGradleProjectContributor implements ProjectContributor {
+public class SettingsGradleProjectContributor implements ProjectContributor {
 
 	private final GradleBuild build;
 
@@ -43,7 +42,7 @@ abstract class SettingsGradleProjectContributor implements ProjectContributor {
 
 	private final String settingsFileName;
 
-	protected SettingsGradleProjectContributor(GradleBuild build,
+	public SettingsGradleProjectContributor(GradleBuild build,
 			IndentingWriterFactory indentingWriterFactory,
 			GradleSettingsWriter settingsWriter, String settingsFileName) {
 		this.build = build;

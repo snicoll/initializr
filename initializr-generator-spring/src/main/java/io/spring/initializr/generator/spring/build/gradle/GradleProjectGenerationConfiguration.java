@@ -25,7 +25,9 @@ import io.spring.initializr.generator.buildsystem.gradle.GradleBuild;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.buildsystem.gradle.GradleKtsBuildSystem;
 import io.spring.initializr.generator.buildsystem.gradle.GroovyDslGradleBuildWriter;
+import io.spring.initializr.generator.buildsystem.gradle.GroovyDslGradleSettingsWriter;
 import io.spring.initializr.generator.buildsystem.gradle.KotlinDslGradleBuildWriter;
+import io.spring.initializr.generator.buildsystem.gradle.KotlinDslGradleSettingsWriter;
 import io.spring.initializr.generator.condition.ConditionalOnBuildSystem;
 import io.spring.initializr.generator.condition.ConditionalOnLanguage;
 import io.spring.initializr.generator.condition.ConditionalOnPackaging;
@@ -113,16 +115,16 @@ public class GradleProjectGenerationConfiguration {
 	@ConditionalOnBuildSystem(GradleBuildSystem.ID)
 	public GradleBuildProjectContributor gradleBuildProjectContributor(
 			GroovyDslGradleBuildWriter buildWriter, GradleBuild build) {
-		return new GroovyDslGradleBuildProjectContributor(buildWriter, build,
-				this.indentingWriterFactory);
+		return new GradleBuildProjectContributor(buildWriter, build,
+				this.indentingWriterFactory, "build.gradle");
 	}
 
 	@Bean
 	@ConditionalOnBuildSystem(GradleKtsBuildSystem.ID)
-	public KotlinDslGradleBuildProjectContributor gradleKtsBuildProjectContributor(
+	public GradleBuildProjectContributor gradleKtsBuildProjectContributor(
 			KotlinDslGradleBuildWriter buildWriter, GradleBuild build) {
-		return new KotlinDslGradleBuildProjectContributor(buildWriter, build,
-				this.indentingWriterFactory);
+		return new GradleBuildProjectContributor(buildWriter, build,
+				this.indentingWriterFactory, "build.gradle.kts");
 	}
 
 	/**
@@ -207,8 +209,8 @@ public class GradleProjectGenerationConfiguration {
 		@Bean
 		public SettingsGradleProjectContributor settingsGradleProjectContributor(
 				GradleBuild build, IndentingWriterFactory indentingWriterFactory) {
-			return new GroovyDslSettingsGradleProjectContributor(build,
-					indentingWriterFactory);
+			return new SettingsGradleProjectContributor(build, indentingWriterFactory,
+					new GroovyDslGradleSettingsWriter(), "settings.gradle");
 		}
 
 		@Bean
@@ -238,10 +240,10 @@ public class GradleProjectGenerationConfiguration {
 		}
 
 		@Bean
-		public KotlinDslSettingsGradleProjectContributor settingsGradleKtsProjectContributor(
+		public SettingsGradleProjectContributor settingsGradleKtsProjectContributor(
 				GradleBuild build, IndentingWriterFactory indentingWriterFactory) {
-			return new KotlinDslSettingsGradleProjectContributor(build,
-					indentingWriterFactory);
+			return new SettingsGradleProjectContributor(build, indentingWriterFactory,
+					new KotlinDslGradleSettingsWriter(), "settings.gradle.kts");
 		}
 
 		@Bean

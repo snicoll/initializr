@@ -29,14 +29,12 @@ import io.spring.initializr.generator.io.IndentingWriterFactory;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 
 /**
- * {@link ProjectContributor} template for the project's {@code build.gradle} or
- * {@code build.gradle.kts} file. A subclass exists for each DSL.
+ * {@link ProjectContributor} for the project's main build file.
  *
  * @author Andy Wilkinson
  * @author Jean-Baptiste Nizet
  */
-public abstract class GradleBuildProjectContributor
-		implements BuildWriter, ProjectContributor {
+public class GradleBuildProjectContributor implements BuildWriter, ProjectContributor {
 
 	private final GradleBuildWriter buildWriter;
 
@@ -46,9 +44,8 @@ public abstract class GradleBuildProjectContributor
 
 	private final String buildFileName;
 
-	protected GradleBuildProjectContributor(GradleBuildWriter buildWriter,
-			GradleBuild build, IndentingWriterFactory indentingWriterFactory,
-			String buildFileName) {
+	public GradleBuildProjectContributor(GradleBuildWriter buildWriter, GradleBuild build,
+			IndentingWriterFactory indentingWriterFactory, String buildFileName) {
 		this.buildWriter = buildWriter;
 		this.build = build;
 		this.indentingWriterFactory = indentingWriterFactory;
