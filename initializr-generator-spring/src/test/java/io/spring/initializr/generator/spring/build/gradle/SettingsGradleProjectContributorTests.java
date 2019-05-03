@@ -113,19 +113,19 @@ class SettingsGradleProjectContributorTests {
 			throws IOException {
 		Path projectDir = Files.createTempDirectory(this.directory, "project-");
 		contributor.contribute(projectDir);
-		return new ProjectStructure(projectDir).readAllLines("settings.gradle");
+		return new ProjectStructure(projectDir).readAllLines("test.gradle");
 	}
 
 	private SettingsGradleProjectContributor groovyDslSettingsGradleProjectContributor(
 			GradleBuild build, IndentingWriterFactory indentingWriterFactory) {
 		return new SettingsGradleProjectContributor(build, indentingWriterFactory,
-				new GroovyDslGradleSettingsWriter(), "settings.gradle");
+				new GroovyDslGradleSettingsWriter(), "test.gradle");
 	}
 
 	private SettingsGradleProjectContributor kotlinDslSettingsGradleProjectContributor(
 			GradleBuild build, IndentingWriterFactory indentingWriterFactory) {
 		return new SettingsGradleProjectContributor(build, indentingWriterFactory,
-				new KotlinDslGradleSettingsWriter(), "settings.gradle.kts");
+				new KotlinDslGradleSettingsWriter(), "test.gradle");
 	}
 
 }

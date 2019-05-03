@@ -25,11 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests for {@link GroovyDslKotlinGradleBuildCustomizer}.
  *
- * @author Andy Wilkinson <<<<<<<
- * HEAD:initializr-generator-spring/src/test/java/io/spring/initializr/generator/spring/code/kotlin/KotlinGradleBuildCustomizerTests.java
- * @author Jean-Baptiste Nizet ======= >>>>>>> 7ec6a29a... Configure spring project
- * generation using Gradle Kotlin
- * DSL:initializr-generator-spring/src/test/java/io/spring/initializr/generator/spring/code/kotlin/GroovyDslKotlinGradleBuildCustomizerTests.java
+ * @author Andy Wilkinson
+ * @author Jean-Baptiste Nizet
  */
 class GroovyDslKotlinGradleBuildCustomizerTests {
 
@@ -52,6 +49,8 @@ class GroovyDslKotlinGradleBuildCustomizerTests {
 		GradleBuild build = new GradleBuild();
 		new GroovyDslKotlinGradleBuildCustomizer(
 				new SimpleKotlinProjectSettings("1.2.70")).customize(build);
+		assertThat(build.getImportedTypes())
+				.contains("org.jetbrains.kotlin.gradle.tasks.KotlinCompile");
 		assertThat(build.getTasksWithTypeCustomizations()).hasSize(1);
 		assertThat(build.getTasksWithTypeCustomizations()).containsKeys("KotlinCompile");
 		assertKotlinOptions(build.getTasksWithTypeCustomizations().get("KotlinCompile"));

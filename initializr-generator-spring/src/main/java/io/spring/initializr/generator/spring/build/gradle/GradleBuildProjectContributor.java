@@ -44,7 +44,7 @@ public class GradleBuildProjectContributor implements BuildWriter, ProjectContri
 
 	private final String buildFileName;
 
-	public GradleBuildProjectContributor(GradleBuildWriter buildWriter, GradleBuild build,
+	GradleBuildProjectContributor(GradleBuildWriter buildWriter, GradleBuild build,
 			IndentingWriterFactory indentingWriterFactory, String buildFileName) {
 		this.buildWriter = buildWriter;
 		this.build = build;
@@ -53,13 +53,13 @@ public class GradleBuildProjectContributor implements BuildWriter, ProjectContri
 	}
 
 	@Override
-	public final void contribute(Path projectRoot) throws IOException {
+	public void contribute(Path projectRoot) throws IOException {
 		Path buildGradle = Files.createFile(projectRoot.resolve(this.buildFileName));
 		writeBuild(Files.newBufferedWriter(buildGradle));
 	}
 
 	@Override
-	public final void writeBuild(Writer out) throws IOException {
+	public void writeBuild(Writer out) throws IOException {
 		try (IndentingWriter writer = this.indentingWriterFactory
 				.createIndentingWriter("gradle", out)) {
 			this.buildWriter.writeTo(writer, this.build);

@@ -32,7 +32,7 @@ import io.spring.initializr.generator.project.contributor.ProjectContributor;
  * @author Andy Wilkinson
  * @author Jean-Baptiste Nizet
  */
-public class SettingsGradleProjectContributor implements ProjectContributor {
+class SettingsGradleProjectContributor implements ProjectContributor {
 
 	private final GradleBuild build;
 
@@ -42,7 +42,7 @@ public class SettingsGradleProjectContributor implements ProjectContributor {
 
 	private final String settingsFileName;
 
-	public SettingsGradleProjectContributor(GradleBuild build,
+	SettingsGradleProjectContributor(GradleBuild build,
 			IndentingWriterFactory indentingWriterFactory,
 			GradleSettingsWriter settingsWriter, String settingsFileName) {
 		this.build = build;
@@ -52,7 +52,7 @@ public class SettingsGradleProjectContributor implements ProjectContributor {
 	}
 
 	@Override
-	public final void contribute(Path projectRoot) throws IOException {
+	public void contribute(Path projectRoot) throws IOException {
 		Path settingsGradle = Files
 				.createFile(projectRoot.resolve(this.settingsFileName));
 		try (IndentingWriter writer = this.indentingWriterFactory.createIndentingWriter(
