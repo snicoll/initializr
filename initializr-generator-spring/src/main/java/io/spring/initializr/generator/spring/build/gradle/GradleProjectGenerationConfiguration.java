@@ -38,7 +38,6 @@ import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.generator.project.ResolvedProjectDescription;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import io.spring.initializr.generator.spring.util.LambdaSafe;
-import io.spring.initializr.metadata.InitializrMetadata;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -245,11 +244,11 @@ public class GradleProjectGenerationConfiguration {
 
 		@Bean
 		BuildCustomizer<GradleBuild> springBootPluginContributor(ResolvedProjectDescription projectDescription,
-				InitializrMetadata metadata) {
+				DependencyManagementPluginVersionResolver versionResolver) {
 			return (build) -> {
 				build.addPlugin("org.springframework.boot", projectDescription.getPlatformVersion().toString());
 				build.addPlugin("io.spring.dependency-management",
-						metadata.getConfiguration().getEnv().getGradle().getDependencyManagementPluginVersion());
+						versionResolver.resolveDependencyManagementPluginVersion(projectDescription));
 			};
 		}
 

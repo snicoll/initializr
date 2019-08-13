@@ -64,6 +64,7 @@ class GradleKtsProjectGenerationConfigurationTests {
 						GradleProjectGenerationConfiguration.class)
 				.withDirectory(directory)
 				.withBean(InitializrMetadata.class, () -> InitializrMetadataTestBuilder.withDefaults().build())
+				.withBean(DependencyManagementPluginVersionResolver.class, () -> (description) -> "1.0.6.RELEASE")
 				.withDescriptionCustomizer((description) -> description
 						.setBuildSystem(new GradleBuildSystem(GradleBuildSystem.DIALECT_KOTLIN)));
 	}

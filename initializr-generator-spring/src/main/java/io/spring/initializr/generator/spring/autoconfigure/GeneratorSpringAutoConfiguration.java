@@ -16,6 +16,8 @@
 
 package io.spring.initializr.generator.spring.autoconfigure;
 
+import io.spring.initializr.generator.spring.build.gradle.DependencyManagementPluginVersionResolver;
+import io.spring.initializr.generator.spring.build.gradle.InitializrDependencyManagementPluginVersionResolver;
 import io.spring.initializr.generator.spring.code.kotlin.InitializrMetadataKotlinVersionResolver;
 import io.spring.initializr.generator.spring.code.kotlin.KotlinVersionResolver;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
@@ -31,6 +33,13 @@ import org.springframework.context.annotation.Bean;
  * @author Andy Wilkinson
  */
 public class GeneratorSpringAutoConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean
+	public DependencyManagementPluginVersionResolver dependencyManagementPluginVersionResolver(
+			InitializrMetadataProvider metadataProvider) {
+		return new InitializrDependencyManagementPluginVersionResolver(metadataProvider);
+	}
 
 	@Bean
 	@ConditionalOnMissingBean
