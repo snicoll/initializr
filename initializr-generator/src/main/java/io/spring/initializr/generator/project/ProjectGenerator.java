@@ -54,10 +54,10 @@ public class ProjectGenerator {
 	 * @return the generated content
 	 * @throws ProjectGenerationException if an error occurs while generating the project
 	 */
-	public <T> T generate(ProjectDescription description, ProjectAssetGenerator<T> projectAssetGenerator)
+	public <T> T generate(MutableProjectDescription description, ProjectAssetGenerator<T> projectAssetGenerator)
 			throws ProjectGenerationException {
 		try (ProjectGenerationContext context = new ProjectGenerationContext()) {
-			context.registerBean(ResolvedProjectDescription.class, resolve(description, context));
+			context.registerBean(ProjectDescription.class, resolve(description, context));
 			context.register(CoreConfiguration.class);
 			this.projectGenerationContext.accept(context);
 			context.refresh();
@@ -70,12 +70,12 @@ public class ProjectGenerator {
 		}
 	}
 
-	private Supplier<ResolvedProjectDescription> resolve(ProjectDescription description,
+	private Supplier<ProjectDescription> resolve(MutableProjectDescription description,
 			ProjectGenerationContext context) {
 		return () -> {
 			context.getBeanProvider(ProjectDescriptionCustomizer.class).orderedStream()
 					.forEach((customizer) -> customizer.customize(description));
-			return new ResolvedProjectDescription(description);
+			return description;
 		};
 	}
 

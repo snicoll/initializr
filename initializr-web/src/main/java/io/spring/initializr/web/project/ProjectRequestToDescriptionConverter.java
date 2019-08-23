@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import io.spring.initializr.generator.buildsystem.BuildSystem;
 import io.spring.initializr.generator.language.Language;
 import io.spring.initializr.generator.packaging.Packaging;
-import io.spring.initializr.generator.project.ProjectDescription;
+import io.spring.initializr.generator.project.MutableProjectDescription;
 import io.spring.initializr.generator.version.Version;
 import io.spring.initializr.metadata.DefaultMetadataElement;
 import io.spring.initializr.metadata.Dependency;
@@ -34,7 +34,8 @@ import io.spring.initializr.metadata.support.MetadataBuildItemMapper;
 import org.springframework.util.StringUtils;
 
 /**
- * Validates a {@link ProjectRequest} and creates a {@link ProjectDescription} from it.
+ * Validates a {@link ProjectRequest} and creates a {@link MutableProjectDescription} from
+ * it.
  *
  * @author Madhura Bhave
  * @author HaiTao Zhang
@@ -45,12 +46,12 @@ public class ProjectRequestToDescriptionConverter {
 
 	private static final char[] VALID_MAVEN_SPECIAL_CHARACTERS = new char[] { '_', '-', '.' };
 
-	public ProjectDescription convert(ProjectRequest request, InitializrMetadata metadata) {
+	public MutableProjectDescription convert(ProjectRequest request, InitializrMetadata metadata) {
 		validate(request, metadata);
 		String springBootVersion = getSpringBootVersion(request, metadata);
 		List<Dependency> resolvedDependencies = getResolvedDependencies(request, springBootVersion, metadata);
 		validateDependencyRange(springBootVersion, resolvedDependencies);
-		ProjectDescription description = new ProjectDescription();
+		MutableProjectDescription description = new MutableProjectDescription();
 		description.setApplicationName(getApplicationName(request, metadata));
 		description.setArtifactId(getArtifactId(request, metadata));
 		description.setBaseDirectory(getBaseDirectory(request.getBaseDir(), request.getArtifactId()));

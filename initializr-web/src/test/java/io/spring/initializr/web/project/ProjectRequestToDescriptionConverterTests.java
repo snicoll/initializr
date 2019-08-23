@@ -19,7 +19,7 @@ package io.spring.initializr.web.project;
 import java.util.Collections;
 
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
-import io.spring.initializr.generator.project.ProjectDescription;
+import io.spring.initializr.generator.project.MutableProjectDescription;
 import io.spring.initializr.generator.test.InitializrMetadataTestBuilder;
 import io.spring.initializr.generator.version.Version;
 import io.spring.initializr.generator.version.VersionRange;
@@ -118,14 +118,14 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetApplicationNameForProjectDescriptionFromRequestWhenPresent() {
 		ProjectRequest request = createProjectRequest();
 		request.setApplicationName("MyApplication");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getApplicationName()).isEqualTo("MyApplication");
 	}
 
 	@Test
 	void convertShouldSetApplicationNameForProjectDescriptionUsingNameWhenAbsentFromRequest() {
 		ProjectRequest request = createProjectRequest();
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getApplicationName()).isEqualTo("DemoApplication");
 	}
 
@@ -134,7 +134,7 @@ class ProjectRequestToDescriptionConverterTests {
 		ProjectRequest request = createProjectRequest();
 		request.setArtifactId("foo");
 		request.setGroupId("com.example");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getGroupId()).isEqualTo("com.example");
 		assertThat(description.getArtifactId()).isEqualTo("foo");
 	}
@@ -143,7 +143,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetVersionFromRequest() {
 		ProjectRequest request = createProjectRequest();
 		request.setVersion("1.0.2-SNAPSHOT");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getVersion()).isEqualTo("1.0.2-SNAPSHOT");
 	}
 
@@ -151,7 +151,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataOnEmptyVersion() {
 		ProjectRequest request = createProjectRequest();
 		request.setVersion("  ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getVersion()).isEqualTo("0.0.1-SNAPSHOT");
 	}
 
@@ -159,7 +159,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetBaseDirectoryFromRequest() {
 		ProjectRequest request = createProjectRequest();
 		request.setBaseDir("my-path");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getBaseDirectory()).isEqualTo("my-path");
 	}
 
@@ -171,7 +171,7 @@ class ProjectRequestToDescriptionConverterTests {
 		InitializrMetadata testMetadata = InitializrMetadataTestBuilder.withDefaults().addType(type).build();
 		ProjectRequest request = createProjectRequest();
 		request.setType("example-type");
-		ProjectDescription description = this.converter.convert(request, testMetadata);
+		MutableProjectDescription description = this.converter.convert(request, testMetadata);
 		assertThat(description.getBuildSystem()).isInstanceOf(GradleBuildSystem.class);
 	}
 
@@ -179,7 +179,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetDescriptionFromRequest() {
 		ProjectRequest request = createProjectRequest();
 		request.setDescription("This is my demo project");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getDescription()).isEqualTo("This is my demo project");
 	}
 
@@ -187,7 +187,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetPackagingFromRequest() {
 		ProjectRequest request = createProjectRequest();
 		request.setPackaging("war");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getPackaging().id()).isEqualTo("war");
 	}
 
@@ -195,14 +195,14 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetPlatformVersionFromRequest() {
 		ProjectRequest request = createProjectRequest();
 		request.setBootVersion("2.0.3");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getPlatformVersion()).isEqualTo(Version.parse("2.0.3"));
 	}
 
 	@Test
 	void convertShouldUseDefaultPlatformVersionFromMetadata() {
 		ProjectRequest request = createProjectRequest();
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getPlatformVersion()).isEqualTo(Version.parse("2.1.1.RELEASE"));
 	}
 
@@ -210,7 +210,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldSetLanguageForProjectDescriptionFromRequest() {
 		ProjectRequest request = createProjectRequest();
 		request.setJavaVersion("1.8");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getLanguage().id()).isEqualTo("java");
 		assertThat(description.getLanguage().jvmVersion()).isEqualTo("1.8");
 	}
@@ -219,7 +219,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataOnEmptyGroup() {
 		ProjectRequest request = createProjectRequest();
 		request.setGroupId("  ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getGroupId()).isEqualTo("com.example");
 	}
 
@@ -227,7 +227,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataOnEmptyArtifact() {
 		ProjectRequest request = createProjectRequest();
 		request.setArtifactId("");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getArtifactId()).isEqualTo("demo");
 	}
 
@@ -235,7 +235,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataOnEmptyName() {
 		ProjectRequest request = createProjectRequest();
 		request.setName("    ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getName()).isEqualTo("demo");
 	}
 
@@ -243,7 +243,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataOnEmptyDescription() {
 		ProjectRequest request = createProjectRequest();
 		request.setDescription("    ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getDescription()).isEqualTo("Demo project for Spring Boot");
 	}
 
@@ -251,7 +251,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataOnEmptyPackageName() {
 		ProjectRequest request = createProjectRequest();
 		request.setPackageName(" ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getPackageName()).isEqualTo("com.example.demo");
 	}
 
@@ -259,7 +259,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataWhenGeneratingPackageNameWithEmptyGroup() {
 		ProjectRequest request = createProjectRequest();
 		request.setGroupId("  ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getPackageName()).isEqualTo("com.example.demo");
 	}
 
@@ -267,7 +267,7 @@ class ProjectRequestToDescriptionConverterTests {
 	void convertShouldUseDefaultFromMetadataWhenGeneratingPackageNameWithEmptyArtifact() {
 		ProjectRequest request = createProjectRequest();
 		request.setArtifactId("  ");
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getPackageName()).isEqualTo("com.example.demo");
 	}
 
@@ -276,7 +276,7 @@ class ProjectRequestToDescriptionConverterTests {
 		ProjectRequest request = createProjectRequest();
 		String artifactId = "correct ! ID @";
 		request.setArtifactId(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getBaseDirectory()).isEqualTo(request.getBaseDir());
 	}
 
@@ -286,7 +286,7 @@ class ProjectRequestToDescriptionConverterTests {
 		String artifactId = "correct ! ID @";
 		request.setArtifactId(artifactId);
 		request.setBaseDir(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getBaseDirectory()).isEqualTo("correct-ID");
 	}
 
@@ -295,7 +295,7 @@ class ProjectRequestToDescriptionConverterTests {
 		ProjectRequest request = createProjectRequest();
 		String artifactId = "correct ! ID @";
 		request.setArtifactId(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getName()).isEqualTo(request.getName());
 	}
 
@@ -305,7 +305,7 @@ class ProjectRequestToDescriptionConverterTests {
 		String artifactId = "correct ! ID @";
 		request.setArtifactId(artifactId);
 		request.setName(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getName()).isEqualTo("correct-ID");
 	}
 
@@ -315,7 +315,7 @@ class ProjectRequestToDescriptionConverterTests {
 		String artifactId = "correct_test";
 		request.setArtifactId(artifactId);
 		request.setBaseDir(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getArtifactId()).isEqualTo("correct_test");
 	}
 
@@ -325,7 +325,7 @@ class ProjectRequestToDescriptionConverterTests {
 		String artifactId = "correct ! ID @";
 		request.setArtifactId(artifactId);
 		request.setBaseDir(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getArtifactId()).isEqualTo("correct-ID");
 	}
 
@@ -335,7 +335,7 @@ class ProjectRequestToDescriptionConverterTests {
 		String artifactId = "correct !_!ID @";
 		request.setArtifactId(artifactId);
 		request.setBaseDir(artifactId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getArtifactId()).isEqualTo("correct_ID");
 	}
 
@@ -344,7 +344,7 @@ class ProjectRequestToDescriptionConverterTests {
 		ProjectRequest request = createProjectRequest();
 		String groupId = "correct !  ID12 @";
 		request.setGroupId(groupId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getGroupId()).isEqualTo("correct.ID12");
 	}
 
@@ -353,7 +353,7 @@ class ProjectRequestToDescriptionConverterTests {
 		ProjectRequest request = createProjectRequest();
 		String groupId = "correct_ID12";
 		request.setGroupId(groupId);
-		ProjectDescription description = this.converter.convert(request, this.metadata);
+		MutableProjectDescription description = this.converter.convert(request, this.metadata);
 		assertThat(description.getGroupId()).isEqualTo("correct_ID12");
 	}
 
