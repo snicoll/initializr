@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.spring.initializr.web.project;
+package io.spring.initializr.web.controller;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.spring.initializr.metadata.InitializrMetadata;
+import io.spring.initializr.web.project.ProjectRequest;
 
 import org.springframework.beans.BeanWrapperImpl;
 

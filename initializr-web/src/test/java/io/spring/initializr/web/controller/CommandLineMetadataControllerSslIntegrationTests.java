@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package io.spring.initializr.web.project;
+package io.spring.initializr.web.controller;
 
-import io.spring.initializr.generator.test.buildsystem.maven.MavenBuildAssert;
 import io.spring.initializr.web.AbstractInitializrControllerIntegrationTests;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
+ * SSL Integration tests for {@link CommandLineMetadataController}.
+ *
  * @author Stephane Nicoll
  */
-@ActiveProfiles({ "test-default", "test-custom-defaults" })
-class MainControllerDefaultsIntegrationTests extends AbstractInitializrControllerIntegrationTests {
-
-	// see defaults customization
+@ActiveProfiles({ "test-default", "test-ssl" })
+public class CommandLineMetadataControllerSslIntegrationTests extends AbstractInitializrControllerIntegrationTests {
 
 	@Test
-	void generateDefaultPom() {
-		String content = getRestTemplate().getForObject(createUrl("/pom.xml?style=web"), String.class);
-		MavenBuildAssert pomAssert = new MavenBuildAssert(content);
-		pomAssert.hasGroupId("org.foo").hasArtifactId("foo-bar").hasVersion("1.2.4-SNAPSHOT")
-				.doesNotHaveNode("/project/packaging").hasName("FooBar").hasDescription("FooBar Project");
+	void forceSsl() {
+		ResponseEntity<String> response = invokeHome("curl/1.2.4", "*/*");
+		String body = response.getBody();
+		assertThat(body).as("Must force https").contains("https://start.spring.io/");
+		assertThat(body).as("Must force https").doesNotContain("http://");
 	}
 
 }

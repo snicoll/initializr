@@ -20,10 +20,10 @@ import java.util.Arrays;
 
 import io.spring.initializr.generator.test.InitializrMetadataTestBuilder;
 import io.spring.initializr.metadata.InitializrMetadata;
+import io.spring.initializr.web.controller.WebProjectRequest;
 import io.spring.initializr.web.project.ProjectFailedEvent;
 import io.spring.initializr.web.project.ProjectGeneratedEvent;
 import io.spring.initializr.web.project.ProjectRequest;
-import io.spring.initializr.web.project.WebProjectRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
