@@ -70,8 +70,8 @@ public class ProjectGenerationInvokerTests {
 	@BeforeEach
 	void setup() {
 		setupContext();
-		ProjectRequestToDescriptionConverter converter = new ProjectRequestToDescriptionConverter();
-		this.invoker = new ProjectGenerationInvoker(this.context, this.eventPublisher, converter);
+		this.invoker = new ProjectGenerationInvoker(this.context, this.eventPublisher,
+				new DefaultProjectRequestToDescriptionConverter());
 	}
 
 	@AfterEach
