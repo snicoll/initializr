@@ -257,7 +257,7 @@ class GroovyDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithConfiguration() throws Exception {
 		GradleBuild build = new GradleBuild();
-		build.addConfiguration("developmentOnly");
+		build.configurations().add("developmentOnly");
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("configurations {", "    developmentOnly", "}");
 	}
@@ -265,8 +265,9 @@ class GroovyDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithConfigurationCustomization() throws Exception {
 		GradleBuild build = new GradleBuild();
-		build.customizeConfiguration("developmentOnly", (configuration) -> configuration.extendsFrom("compile"));
-		build.customizeConfiguration("developmentOnly", (configuration) -> configuration.extendsFrom("testCompile"));
+		build.configurations().customize("developmentOnly", (configuration) -> configuration.extendsFrom("compile"));
+		build.configurations().customize("developmentOnly",
+				(configuration) -> configuration.extendsFrom("testCompile"));
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("configurations {", "    developmentOnly {",
 				"        extendsFrom compile, testCompile", "    }", "}");
@@ -275,8 +276,8 @@ class GroovyDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithConfigurationCustomizations() throws Exception {
 		GradleBuild build = new GradleBuild();
-		build.customizeConfiguration("developmentOnly", (configuration) -> configuration.extendsFrom("compile"));
-		build.customizeConfiguration("testOnly", (configuration) -> configuration.extendsFrom("testCompile"));
+		build.configurations().customize("developmentOnly", (configuration) -> configuration.extendsFrom("compile"));
+		build.configurations().customize("testOnly", (configuration) -> configuration.extendsFrom("testCompile"));
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("configurations {", "    developmentOnly {", "        extendsFrom compile",
 				"    }", "    testOnly {", "        extendsFrom testCompile", "    }", "}");

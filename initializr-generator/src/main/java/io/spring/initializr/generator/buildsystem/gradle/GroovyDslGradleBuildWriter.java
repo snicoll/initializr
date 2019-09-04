@@ -25,7 +25,6 @@ import io.spring.initializr.generator.buildsystem.BillOfMaterials;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.buildsystem.Dependency.Exclusion;
 import io.spring.initializr.generator.buildsystem.MavenRepository;
-import io.spring.initializr.generator.buildsystem.gradle.GradleBuild.ConfigurationCustomization;
 import io.spring.initializr.generator.io.IndentingWriter;
 import io.spring.initializr.generator.version.VersionProperty;
 import io.spring.initializr.generator.version.VersionReference;
@@ -93,15 +92,6 @@ public class GroovyDslGradleBuildWriter extends GradleBuildWriter {
 	}
 
 	@Override
-	protected void writeConfiguration(IndentingWriter writer, String configurationName,
-			GradleBuild.ConfigurationCustomization configurationCustomization, List<String> customConfigurations) {
-		writer.println(configurationName + " {");
-		writer.indented(() -> writer.println(
-				String.format("extendsFrom %s", String.join(", ", configurationCustomization.getExtendsFrom()))));
-		writer.println("}");
-	}
-
-	@Override
 	protected String repositoryAsString(MavenRepository repository) {
 		if (MavenRepository.MAVEN_CENTRAL.equals(repository)) {
 			return "mavenCentral()";
@@ -120,20 +110,24 @@ public class GroovyDslGradleBuildWriter extends GradleBuildWriter {
 	}
 
 	@Override
-	protected void writeConfigurations(IndentingWriter writer, GradleBuild build) {
-		Map<String, ConfigurationCustomization> configurationCustomizations = build.getConfigurationCustomizations();
-		List<String> configurations = build.getConfigurations();
-		if (configurations.isEmpty() && configurationCustomizations.isEmpty()) {
+	protected void writeConfigurations(IndentingWriter writer, GradleConfigurationContainer configurations) {
+		if (configurations.isEmpty()) {
 			return;
 		}
 		writer.println("configurations {");
 		writer.indented(() -> {
-			configurations.forEach(writer::println);
-			configurationCustomizations
-					.forEach((name, customization) -> writeConfiguration(writer, name, customization, configurations));
+			configurations.names().forEach(writer::println);
+			configurations.customizations().forEach((configuration) -> writeConfiguration(writer, configuration));
 		});
 		writer.println("}");
 		writer.println("");
+	}
+
+	protected void writeConfiguration(IndentingWriter writer, GradleConfiguration configuration) {
+		writer.println(configuration.getName() + " {");
+		writer.indented(() -> writer
+				.println(String.format("extendsFrom %s", String.join(", ", configuration.getExtendsFrom()))));
+		writer.println("}");
 	}
 
 	@Override

@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,9 +45,7 @@ public class GradleBuild extends Build {
 
 	private final GradlePluginContainer plugins = new GradlePluginContainer();
 
-	private final List<String> configurations = new ArrayList<>();
-
-	private final Map<String, ConfigurationCustomization> configurationCustomizations = new LinkedHashMap<>();
+	private final GradleConfigurationContainer configurations = new GradleConfigurationContainer();
 
 	private final Map<String, TaskCustomization> taskCustomizations = new LinkedHashMap<>();
 
@@ -80,29 +77,16 @@ public class GradleBuild extends Build {
 		return this.plugins;
 	}
 
+	public GradleConfigurationContainer configurations() {
+		return this.configurations;
+	}
+
 	public void buildscript(Consumer<Buildscript> customizer) {
 		customizer.accept(this.buildscript);
 	}
 
 	public Buildscript getBuildscript() {
 		return this.buildscript;
-	}
-
-	public void customizeConfiguration(String configurationName, Consumer<ConfigurationCustomization> customizer) {
-		customizer.accept(this.configurationCustomizations.computeIfAbsent(configurationName,
-				(name) -> new ConfigurationCustomization()));
-	}
-
-	public void addConfiguration(String configurationName) {
-		this.configurations.add(configurationName);
-	}
-
-	public Map<String, ConfigurationCustomization> getConfigurationCustomizations() {
-		return Collections.unmodifiableMap(this.configurationCustomizations);
-	}
-
-	public List<String> getConfigurations() {
-		return Collections.unmodifiableList(this.configurations);
 	}
 
 	public Set<String> getImportedTypes() {
@@ -162,23 +146,6 @@ public class GradleBuild extends Build {
 
 		public Map<String, String> getExt() {
 			return Collections.unmodifiableMap(this.ext);
-		}
-
-	}
-
-	/**
-	 * Customization of a configuration in a Gradle build.
-	 */
-	public static class ConfigurationCustomization {
-
-		private final Set<String> extendsFrom = new LinkedHashSet<>();
-
-		public void extendsFrom(String configurationName) {
-			this.extendsFrom.add(configurationName);
-		}
-
-		public Set<String> getExtendsFrom() {
-			return Collections.unmodifiableSet(this.extendsFrom);
 		}
 
 	}

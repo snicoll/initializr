@@ -38,7 +38,6 @@ import io.spring.initializr.generator.buildsystem.DependencyContainer;
 import io.spring.initializr.generator.buildsystem.DependencyScope;
 import io.spring.initializr.generator.buildsystem.MavenRepository;
 import io.spring.initializr.generator.buildsystem.PropertyContainer;
-import io.spring.initializr.generator.buildsystem.gradle.GradleBuild.ConfigurationCustomization;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuild.TaskCustomization;
 import io.spring.initializr.generator.io.IndentingWriter;
 import io.spring.initializr.generator.version.VersionProperty;
@@ -63,7 +62,7 @@ public abstract class GradleBuildWriter {
 		writeProperty(writer, "version", settings.getVersion());
 		writeJavaSourceCompatibility(writer, settings);
 		writer.println();
-		writeConfigurations(writer, build);
+		writeConfigurations(writer, build.configurations());
 		writeRepositories(writer, build);
 		writeProperties(writer, build.properties());
 		writeDependencies(writer, build);
@@ -91,10 +90,7 @@ public abstract class GradleBuildWriter {
 
 	protected abstract void writeJavaSourceCompatibility(IndentingWriter writer, GradleBuildSettings settings);
 
-	protected abstract void writeConfigurations(IndentingWriter writer, GradleBuild build);
-
-	protected abstract void writeConfiguration(IndentingWriter writer, String configurationName,
-			ConfigurationCustomization configurationCustomization, List<String> customConfigurations);
+	protected abstract void writeConfigurations(IndentingWriter writer, GradleConfigurationContainer configurations);
 
 	protected final void writeRepositories(IndentingWriter writer, GradleBuild build) {
 		writeNestedCollection(writer, "repositories", build.repositories().items().collect(Collectors.toList()),

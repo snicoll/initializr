@@ -262,7 +262,7 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithConfiguration() throws Exception {
 		GradleBuild build = new GradleBuild();
-		build.addConfiguration("developmentOnly");
+		build.configurations().add("developmentOnly");
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("val developmentOnly by configurations.creating");
 	}
@@ -270,9 +270,9 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithConfigurationCustomization() throws Exception {
 		GradleBuild build = new GradleBuild();
-		build.addConfiguration("custom");
-		build.customizeConfiguration("runtimeClasspath", (configuration) -> configuration.extendsFrom("custom"));
-		build.customizeConfiguration("runtimeClasspath", (configuration) -> configuration.extendsFrom("builtIn"));
+		build.configurations().add("custom");
+		build.configurations().customize("runtimeClasspath", (configuration) -> configuration.extendsFrom("custom"));
+		build.configurations().customize("runtimeClasspath", (configuration) -> configuration.extendsFrom("builtIn"));
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("val custom by configurations.creating", "configurations {",
 				"    runtimeClasspath {", "        extendsFrom(custom, configurations.builtIn.get())", "    }", "}");
@@ -281,9 +281,10 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithConfigurationCustomizations() throws Exception {
 		GradleBuild build = new GradleBuild();
-		build.addConfiguration("custom");
-		build.customizeConfiguration("runtimeClasspath", (configuration) -> configuration.extendsFrom("custom"));
-		build.customizeConfiguration("testRuntimeClasspath", (configuration) -> configuration.extendsFrom("builtIn"));
+		build.configurations().add("custom");
+		build.configurations().customize("runtimeClasspath", (configuration) -> configuration.extendsFrom("custom"));
+		build.configurations().customize("testRuntimeClasspath",
+				(configuration) -> configuration.extendsFrom("builtIn"));
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("val custom by configurations.creating", "configurations {",
 				"    runtimeClasspath {", "        extendsFrom(custom)", "    }", "    testRuntimeClasspath {",
