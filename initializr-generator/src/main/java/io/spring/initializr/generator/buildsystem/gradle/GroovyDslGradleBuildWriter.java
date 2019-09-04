@@ -179,31 +179,23 @@ public class GroovyDslGradleBuildWriter extends GradleBuildWriter {
 	}
 
 	@Override
-	protected void writeTasksWithTypeCustomizations(IndentingWriter writer, GradleBuild build) {
-		Map<String, GradleBuild.TaskCustomization> tasksWithTypeCustomizations = build.getTasksWithTypeCustomizations();
-
-		tasksWithTypeCustomizations.forEach((typeName, customization) -> {
+	protected void writeTasks(IndentingWriter writer, GradleTaskContainer tasks) {
+		tasks.values().filter((candidate) -> candidate.getType() != null).forEach((task) -> {
 			writer.println();
-			writer.println("tasks.withType(" + typeName + ") {");
-			writer.indented(() -> writeTaskCustomization(writer, customization));
+			writer.println("tasks.withType(" + task.getName() + ") {");
+			writer.indented(() -> writeTaskCustomization(writer, task));
+			writer.println("}");
+		});
+		tasks.values().filter((candidate) -> candidate.getType() == null).forEach((task) -> {
+			writer.println();
+			writer.println(task.getName() + " {");
+			writer.indented(() -> writeTaskCustomization(writer, task));
 			writer.println("}");
 		});
 	}
 
 	@Override
-	protected void writeTaskCustomizations(IndentingWriter writer, GradleBuild build) {
-		Map<String, GradleBuild.TaskCustomization> taskCustomizations = build.getTaskCustomizations();
-
-		taskCustomizations.forEach((name, customization) -> {
-			writer.println();
-			writer.println(name + " {");
-			writer.indented(() -> writeTaskCustomization(writer, customization));
-			writer.println("}");
-		});
-	}
-
-	@Override
-	protected String invocationAsString(GradleBuild.TaskCustomization.Invocation invocation) {
+	protected String invocationAsString(GradleTask.Invocation invocation) {
 		String arguments = (invocation.getArguments().isEmpty()) ? "()"
 				: " " + String.join(", ", invocation.getArguments());
 		return invocation.getTarget() + arguments;

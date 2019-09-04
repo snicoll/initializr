@@ -150,11 +150,11 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithTaskWithTypesCustomizedWithNestedAssignments() throws IOException {
 		GradleBuild build = new GradleBuild();
-		build.customizeTasksWithType("org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+		build.tasks().customizeWithType("org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
 				(task) -> task.nested("kotlinOptions",
-						(kotlinOptions) -> kotlinOptions.set("freeCompilerArgs", "listOf(\"-Xjsr305=strict\")")));
-		build.customizeTasksWithType("org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
-				(task) -> task.nested("kotlinOptions", (kotlinOptions) -> kotlinOptions.set("jvmTarget", "\"1.8\"")));
+						(kotlinOptions) -> kotlinOptions.attribute("freeCompilerArgs", "listOf(\"-Xjsr305=strict\")")));
+		build.tasks().customizeWithType("org.jetbrains.kotlin.gradle.tasks.KotlinCompile", (task) -> task
+				.nested("kotlinOptions", (kotlinOptions) -> kotlinOptions.attribute("jvmTarget", "\"1.8\"")));
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsOnlyOnce("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile").containsSequence(
 				"tasks.withType<KotlinCompile> {", "    kotlinOptions {",
@@ -164,7 +164,7 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithTaskWithTypesAndShortTypes() throws IOException {
 		GradleBuild build = new GradleBuild();
-		build.customizeTasksWithType("JavaCompile", (javaCompile) -> javaCompile.set("options.fork", "true"));
+		build.tasks().customizeWithType("JavaCompile", (javaCompile) -> javaCompile.attribute("options.fork", "true"));
 		assertThat(generateBuild(build)).doesNotContain("import JavaCompile")
 				.containsSequence("tasks.withType<JavaCompile> {", "    options.fork = true", "}");
 	}
@@ -172,7 +172,7 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithTaskCustomizedWithInvocations() throws IOException {
 		GradleBuild build = new GradleBuild();
-		build.customizeTask("asciidoctor", (task) -> {
+		build.tasks().customize("asciidoctor", (task) -> {
 			task.invoke("inputs.dir", "snippetsDir");
 			task.invoke("dependsOn", "test");
 		});
@@ -184,9 +184,9 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithTaskCustomizedWithAssignments() throws IOException {
 		GradleBuild build = new GradleBuild();
-		build.customizeTask("compileKotlin", (task) -> {
-			task.set("kotlinOptions.freeCompilerArgs", "listOf(\"-Xjsr305=strict\")");
-			task.set("kotlinOptions.jvmTarget", "\"1.8\"");
+		build.tasks().customize("compileKotlin", (task) -> {
+			task.attribute("kotlinOptions.freeCompilerArgs", "listOf(\"-Xjsr305=strict\")");
+			task.attribute("kotlinOptions.jvmTarget", "\"1.8\"");
 		});
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("tasks.compileKotlin {",
@@ -197,10 +197,10 @@ class KotlinDslGradleBuildWriterTests {
 	@Test
 	void gradleBuildWithTaskCustomizedWithNestedCustomization() throws IOException {
 		GradleBuild build = new GradleBuild();
-		build.customizeTask("compileKotlin",
+		build.tasks().customize("compileKotlin",
 				(compileKotlin) -> compileKotlin.nested("kotlinOptions", (kotlinOptions) -> {
-					kotlinOptions.set("freeCompilerArgs", "listOf(\"-Xjsr305=strict\")");
-					kotlinOptions.set("jvmTarget", "\"1.8\"");
+					kotlinOptions.attribute("freeCompilerArgs", "listOf(\"-Xjsr305=strict\")");
+					kotlinOptions.attribute("jvmTarget", "\"1.8\"");
 				}));
 		List<String> lines = generateBuild(build);
 		assertThat(lines).containsSequence("tasks.compileKotlin {", "    kotlinOptions {",

@@ -27,7 +27,6 @@ import io.spring.initializr.generator.buildsystem.BillOfMaterials;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.buildsystem.Dependency.Exclusion;
 import io.spring.initializr.generator.buildsystem.MavenRepository;
-import io.spring.initializr.generator.buildsystem.gradle.GradleBuild.TaskCustomization;
 import io.spring.initializr.generator.io.IndentingWriter;
 import io.spring.initializr.generator.version.VersionProperty;
 import io.spring.initializr.generator.version.VersionReference;
@@ -198,31 +197,23 @@ public class KotlinDslGradleBuildWriter extends GradleBuildWriter {
 	}
 
 	@Override
-	protected void writeTasksWithTypeCustomizations(IndentingWriter writer, GradleBuild build) {
-		Map<String, TaskCustomization> tasksWithTypeCustomizations = build.getTasksWithTypeCustomizations();
-
-		tasksWithTypeCustomizations.forEach((typeName, customization) -> {
+	protected void writeTasks(IndentingWriter writer, GradleTaskContainer tasks) {
+		tasks.values().filter((candidate) -> candidate.getType() != null).forEach((task) -> {
 			writer.println();
-			writer.println("tasks.withType<" + typeName + "> {");
-			writer.indented(() -> writeTaskCustomization(writer, customization));
+			writer.println("tasks.withType<" + task.getName() + "> {");
+			writer.indented(() -> writeTaskCustomization(writer, task));
+			writer.println("}");
+		});
+		tasks.values().filter((candidate) -> candidate.getType() == null).forEach((task) -> {
+			writer.println();
+			writer.println("tasks." + task.getName() + " {");
+			writer.indented(() -> writeTaskCustomization(writer, task));
 			writer.println("}");
 		});
 	}
 
 	@Override
-	protected void writeTaskCustomizations(IndentingWriter writer, GradleBuild build) {
-		Map<String, TaskCustomization> taskCustomizations = build.getTaskCustomizations();
-
-		taskCustomizations.forEach((name, customization) -> {
-			writer.println();
-			writer.println("tasks." + name + " {");
-			writer.indented(() -> writeTaskCustomization(writer, customization));
-			writer.println("}");
-		});
-	}
-
-	@Override
-	protected String invocationAsString(TaskCustomization.Invocation invocation) {
+	protected String invocationAsString(GradleTask.Invocation invocation) {
 		return invocation.getTarget() + "(" + String.join(", ", invocation.getArguments()) + ")";
 	}
 

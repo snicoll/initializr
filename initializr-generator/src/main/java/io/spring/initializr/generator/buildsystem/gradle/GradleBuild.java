@@ -17,21 +17,15 @@
 package io.spring.initializr.generator.buildsystem.gradle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSettings.Builder;
-
-import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * Gradle build configuration for a project.
@@ -47,11 +41,7 @@ public class GradleBuild extends Build {
 
 	private final GradleConfigurationContainer configurations = new GradleConfigurationContainer();
 
-	private final Map<String, TaskCustomization> taskCustomizations = new LinkedHashMap<>();
-
-	private final Set<String> importedTypes = new HashSet<>();
-
-	private final Map<String, TaskCustomization> tasksWithTypeCustomizations = new LinkedHashMap<>();
+	private final GradleTaskContainer tasks = new GradleTaskContainer();
 
 	private final Buildscript buildscript = new Buildscript();
 
@@ -81,44 +71,16 @@ public class GradleBuild extends Build {
 		return this.configurations;
 	}
 
+	public GradleTaskContainer tasks() {
+		return this.tasks;
+	}
+
 	public void buildscript(Consumer<Buildscript> customizer) {
 		customizer.accept(this.buildscript);
 	}
 
 	public Buildscript getBuildscript() {
 		return this.buildscript;
-	}
-
-	public Set<String> getImportedTypes() {
-		return Collections.unmodifiableSet(this.importedTypes);
-	}
-
-	/**
-	 * Customize tasks matching a given type.
-	 * @param typeName the name of type. Can use the short form for well-known types such
-	 * as {@code JavaCompile}, use a fully qualified name if an import is required
-	 * @param customizer a callback to customize tasks matching that type
-	 */
-	public void customizeTasksWithType(String typeName, Consumer<TaskCustomization> customizer) {
-		String packageName = ClassUtils.getPackageName(typeName);
-		if (!StringUtils.isEmpty(packageName)) {
-			this.importedTypes.add(typeName);
-		}
-		String shortName = ClassUtils.getShortName(typeName);
-		customizer
-				.accept(this.tasksWithTypeCustomizations.computeIfAbsent(shortName, (name) -> new TaskCustomization()));
-	}
-
-	public Map<String, TaskCustomization> getTasksWithTypeCustomizations() {
-		return Collections.unmodifiableMap(this.tasksWithTypeCustomizations);
-	}
-
-	public void customizeTask(String taskName, Consumer<TaskCustomization> customizer) {
-		customizer.accept(this.taskCustomizations.computeIfAbsent(taskName, (name) -> new TaskCustomization()));
-	}
-
-	public Map<String, TaskCustomization> getTaskCustomizations() {
-		return Collections.unmodifiableMap(this.taskCustomizations);
 	}
 
 	/**
@@ -146,67 +108,6 @@ public class GradleBuild extends Build {
 
 		public Map<String, String> getExt() {
 			return Collections.unmodifiableMap(this.ext);
-		}
-
-	}
-
-	/**
-	 * Customization of a task in a Gradle build.
-	 */
-	public static class TaskCustomization {
-
-		private final List<Invocation> invocations = new ArrayList<>();
-
-		private final Map<String, String> assignments = new LinkedHashMap<>();
-
-		private final Map<String, TaskCustomization> nested = new LinkedHashMap<>();
-
-		public void nested(String property, Consumer<TaskCustomization> customizer) {
-			customizer.accept(this.nested.computeIfAbsent(property, (name) -> new TaskCustomization()));
-		}
-
-		public Map<String, TaskCustomization> getNested() {
-			return this.nested;
-		}
-
-		public void invoke(String target, String... arguments) {
-			this.invocations.add(new Invocation(target, Arrays.asList(arguments)));
-		}
-
-		public List<Invocation> getInvocations() {
-			return Collections.unmodifiableList(this.invocations);
-		}
-
-		public void set(String target, String value) {
-			this.assignments.put(target, value);
-		}
-
-		public Map<String, String> getAssignments() {
-			return Collections.unmodifiableMap(this.assignments);
-		}
-
-		/**
-		 * An invocation of a method that customizes a task.
-		 */
-		public static class Invocation {
-
-			private final String target;
-
-			private final List<String> arguments;
-
-			Invocation(String target, List<String> arguments) {
-				this.target = target;
-				this.arguments = arguments;
-			}
-
-			public String getTarget() {
-				return this.target;
-			}
-
-			public List<String> getArguments() {
-				return this.arguments;
-			}
-
 		}
 
 	}
