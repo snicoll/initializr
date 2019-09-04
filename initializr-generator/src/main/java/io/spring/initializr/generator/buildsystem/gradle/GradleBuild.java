@@ -16,11 +16,6 @@
 
 package io.spring.initializr.generator.buildsystem.gradle;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import io.spring.initializr.generator.buildsystem.Build;
@@ -43,7 +38,7 @@ public class GradleBuild extends Build {
 
 	private final GradleTaskContainer tasks = new GradleTaskContainer();
 
-	private final Buildscript buildscript = new Buildscript();
+	private final GradleBuildscript.Builder buildscript = new GradleBuildscript.Builder();
 
 	public GradleBuild(BuildItemResolver buildItemResolver) {
 		super(buildItemResolver);
@@ -75,41 +70,12 @@ public class GradleBuild extends Build {
 		return this.tasks;
 	}
 
-	public void buildscript(Consumer<Buildscript> customizer) {
-		customizer.accept(this.buildscript);
+	public void buildscript(Consumer<GradleBuildscript.Builder> buildscript) {
+		buildscript.accept(this.buildscript);
 	}
 
-	public Buildscript getBuildscript() {
-		return this.buildscript;
-	}
-
-	/**
-	 * The {@code buildscript} block in the {@code build.gradle} file.
-	 */
-	public static class Buildscript {
-
-		private final List<String> dependencies = new ArrayList<>();
-
-		private final Map<String, String> ext = new LinkedHashMap<>();
-
-		public Buildscript dependency(String coordinates) {
-			this.dependencies.add(coordinates);
-			return this;
-		}
-
-		public Buildscript ext(String key, String value) {
-			this.ext.put(key, value);
-			return this;
-		}
-
-		public List<String> getDependencies() {
-			return Collections.unmodifiableList(this.dependencies);
-		}
-
-		public Map<String, String> getExt() {
-			return Collections.unmodifiableMap(this.ext);
-		}
-
+	public GradleBuildscript getBuildscript() {
+		return this.buildscript.build();
 	}
 
 }
