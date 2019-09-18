@@ -53,7 +53,7 @@ public class DefaultProjectRequestToDescriptionConverter
 	public ProjectDescription convert(ProjectRequest request, InitializrMetadata metadata) {
 		MutableProjectDescription description = new MutableProjectDescription();
 		convert(request, description, metadata);
-		return description;
+		return description.seal();
 	}
 
 	/**

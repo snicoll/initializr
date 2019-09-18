@@ -92,7 +92,7 @@ public class ProjectGenerationControllerCustomRequestIntegrationTests
 			// Override attributes for test purposes
 			description.setPackageName("org.example.custom");
 			description.setApplicationName("CustomApp");
-			return description;
+			return description.seal();
 		}
 
 	}

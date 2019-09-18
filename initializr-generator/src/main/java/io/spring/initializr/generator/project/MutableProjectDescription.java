@@ -35,6 +35,8 @@ import org.springframework.util.StringUtils;
  */
 public class MutableProjectDescription implements ProjectDescription {
 
+	private ProjectDescription originalDescription;
+
 	private Version platformVersion;
 
 	private BuildSystem buildSystem;
@@ -61,6 +63,42 @@ public class MutableProjectDescription implements ProjectDescription {
 
 	private String baseDirectory;
 
+	public MutableProjectDescription() {
+		this.originalDescription = this;
+	}
+
+	protected MutableProjectDescription(MutableProjectDescription clone) {
+		this.originalDescription = this; // 
+		this.platformVersion = clone.getPlatformVersion();
+		this.buildSystem = clone.getBuildSystem();
+		this.packaging = clone.getPackaging();
+		this.language = clone.getLanguage();
+		this.requestedDependencies.putAll(clone.getRequestedDependencies());
+		this.groupId = clone.getGroupId();
+		this.artifactId = clone.getArtifactId();
+		this.version = clone.getVersion();
+		this.name = clone.getName();
+		this.description = clone.getDescription();
+		this.applicationName = clone.getApplicationName();
+		this.packageName = clone.getPackageName();
+		this.baseDirectory = clone.getBaseDirectory();
+	}
+
+	public final MutableProjectDescription seal() {
+		this.originalDescription = createCopy();
+		return this;
+	}
+
+	protected MutableProjectDescription createCopy() {
+		return new MutableProjectDescription(this);
+	}
+
+	@Override
+	public ProjectDescription getOriginalDescription() {
+		return this.originalDescription;
+	}
+
+	@Override
 	public Version getPlatformVersion() {
 		return this.platformVersion;
 	}
@@ -69,6 +107,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.platformVersion = platformVersion;
 	}
 
+	@Override
 	public BuildSystem getBuildSystem() {
 		return this.buildSystem;
 	}
@@ -77,6 +116,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.buildSystem = buildSystem;
 	}
 
+	@Override
 	public Packaging getPackaging() {
 		return this.packaging;
 	}
@@ -85,6 +125,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.packaging = packaging;
 	}
 
+	@Override
 	public Language getLanguage() {
 		return this.language;
 	}
@@ -97,10 +138,12 @@ public class MutableProjectDescription implements ProjectDescription {
 		return this.requestedDependencies.put(id, dependency);
 	}
 
+	@Override
 	public Map<String, Dependency> getRequestedDependencies() {
 		return Collections.unmodifiableMap(this.requestedDependencies);
 	}
 
+	@Override
 	public String getGroupId() {
 		return this.groupId;
 	}
@@ -109,6 +152,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.groupId = groupId;
 	}
 
+	@Override
 	public String getArtifactId() {
 		return this.artifactId;
 	}
@@ -117,6 +161,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.artifactId = artifactId;
 	}
 
+	@Override
 	public String getVersion() {
 		return this.version;
 	}
@@ -125,6 +170,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.version = version;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -133,6 +179,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.name = name;
 	}
 
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
@@ -141,6 +188,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.description = description;
 	}
 
+	@Override
 	public String getApplicationName() {
 		return this.applicationName;
 	}
@@ -149,6 +197,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.applicationName = applicationName;
 	}
 
+	@Override
 	public String getPackageName() {
 		if (StringUtils.hasText(this.packageName)) {
 			return this.packageName;
@@ -163,6 +212,7 @@ public class MutableProjectDescription implements ProjectDescription {
 		this.packageName = packageName;
 	}
 
+	@Override
 	public String getBaseDirectory() {
 		return this.baseDirectory;
 	}

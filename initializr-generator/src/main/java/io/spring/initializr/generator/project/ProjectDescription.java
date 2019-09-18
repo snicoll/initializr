@@ -33,6 +33,14 @@ import io.spring.initializr.generator.version.Version;
 public interface ProjectDescription {
 
 	/**
+	 * Return the original state of this {@link ProjectDescription} before any
+	 * {@link ProjectDescriptionCustomizer customizers} are applied on it.
+	 * @return the original project description or {@code this} if this instance has not
+	 * been sealed yet
+	 */
+	ProjectDescription getOriginalDescription();
+
+	/**
 	 * Return a immutable mapping of requested {@link Dependency dependencies}.
 	 * @return the requested dependencies
 	 */
