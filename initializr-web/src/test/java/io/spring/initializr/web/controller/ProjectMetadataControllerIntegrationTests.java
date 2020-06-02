@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 the original author or authors.
+ * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,12 @@ public class ProjectMetadataControllerIntegrationTests extends AbstractInitializ
 	void metadataWithV2AcceptHeader() {
 		ResponseEntity<String> response = invokeHome(null, "application/vnd.initializr.v2+json");
 		validateMetadata(response, InitializrMetadataVersion.V2.getMediaType(), "2.0.0", JSONCompareMode.STRICT);
+	}
+
+	@Test
+	void metadataWithV22AcceptHeader() {
+		ResponseEntity<String> response = invokeHome(null, "application/vnd.initializr.v2.2+json");
+		validateMetadata(response, InitializrMetadataVersion.V2_2.getMediaType(), "2.2.0", JSONCompareMode.STRICT);
 	}
 
 	@Test
