@@ -50,9 +50,11 @@ import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -76,8 +78,11 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 @EnableConfigurationProperties(InitializrProperties.class)
-@AutoConfigureAfter({ JacksonAutoConfiguration.class, RestTemplateAutoConfiguration.class })
+@AutoConfigureAfter({ CacheAutoConfiguration.class, JacksonAutoConfiguration.class,
+		RestTemplateAutoConfiguration.class })
 public class InitializrAutoConfiguration {
+
+	private static final String METADATA_CACHE_NAME = "initializr.metadata";
 
 	@Bean
 	@ConditionalOnMissingBean
@@ -112,23 +117,33 @@ public class InitializrAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(RestTemplateBuilder restTemplateBuilder,
-			ObjectMapper objectMapper) {
-		return new DefaultInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(InitializrMetadataProvider.class)
-	public InitializrMetadataProvider initializrMetadataProvider(InitializrProperties properties,
-			InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy) {
-		InitializrMetadata metadata = InitializrMetadataBuilder.fromInitializrProperties(properties).build();
-		return new DefaultInitializrMetadataProvider(metadata, initializrMetadataUpdateStrategy);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
 	public DependencyMetadataProvider dependencyMetadataProvider() {
 		return new DefaultDependencyMetadataProvider();
+	}
+
+	@Configuration
+	@ConditionalOnMissingBean(InitializrMetadataProvider.class)
+	static class InitializrMetadataConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy(RestTemplateBuilder restTemplateBuilder,
+				ObjectMapper objectMapper) {
+			return new DefaultInitializrMetadataUpdateStrategy(restTemplateBuilder.build(), objectMapper);
+		}
+
+		@Bean
+		@ConditionalOnSingleCandidate(CacheManager.class)
+		InitializrMetadataProvider initializrMetadataProvider(CacheManager cacheManager,
+				InitializrProperties properties, InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy) {
+			Cache cache = cacheManager.getCache(METADATA_CACHE_NAME);
+			if (cache == null) {
+				throw new IllegalStateException("No cache found with name '" + METADATA_CACHE_NAME + "'");
+			}
+			InitializrMetadata metadata = InitializrMetadataBuilder.fromInitializrProperties(properties).build();
+			return new DefaultInitializrMetadataProvider(cache, metadata, initializrMetadataUpdateStrategy);
+		}
+
 	}
 
 	/**
@@ -192,7 +207,7 @@ public class InitializrAutoConfiguration {
 		@Bean
 		JCacheManagerCustomizer initializrCacheManagerCustomizer() {
 			return (cacheManager) -> {
-				cacheManager.createCache("initializr.metadata",
+				cacheManager.createCache(METADATA_CACHE_NAME,
 						config().setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.TEN_MINUTES)));
 				cacheManager.createCache("initializr.dependency-metadata", config());
 				cacheManager.createCache("initializr.project-resources", config());

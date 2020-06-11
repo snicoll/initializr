@@ -19,7 +19,7 @@ package io.spring.initializr.web.support;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.Cache;
 
 /**
  * A default {@link InitializrMetadataProvider} that caches the {@link InitializrMetadata
@@ -30,19 +30,25 @@ import org.springframework.cache.annotation.Cacheable;
  */
 public class DefaultInitializrMetadataProvider implements InitializrMetadataProvider {
 
+	private final Cache metadataCache;
+
 	private InitializrMetadata metadata;
 
 	private final InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy;
 
-	public DefaultInitializrMetadataProvider(InitializrMetadata metadata,
+	public DefaultInitializrMetadataProvider(Cache metadataCache, InitializrMetadata metadata,
 			InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy) {
+		this.metadataCache = metadataCache;
 		this.metadata = metadata;
 		this.initializrMetadataUpdateStrategy = initializrMetadataUpdateStrategy;
 	}
 
 	@Override
-	@Cacheable(value = "initializr.metadata", key = "'metadata'")
 	public InitializrMetadata get() {
+		return this.metadataCache.get("metadata", this::refreshMetadata);
+	}
+
+	private InitializrMetadata refreshMetadata() {
 		this.metadata = this.initializrMetadataUpdateStrategy.update(this.metadata);
 		return this.metadata;
 	}

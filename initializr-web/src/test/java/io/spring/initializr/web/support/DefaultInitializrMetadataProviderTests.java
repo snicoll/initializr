@@ -19,10 +19,13 @@ package io.spring.initializr.web.support;
 import io.spring.initializr.metadata.InitializrMetadata;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * Tests for {@link DefaultInitializrMetadataProvider}.
@@ -32,14 +35,29 @@ import static org.mockito.Mockito.verify;
 class DefaultInitializrMetadataProviderTests {
 
 	@Test
-	void strategyIsInvokedOnGet() {
+	void strategyIsInvokedOnCacheMiss() {
 		InitializrMetadata metadata = mock(InitializrMetadata.class);
 		InitializrMetadata updatedMetadata = mock(InitializrMetadata.class);
 		InitializrMetadataUpdateStrategy updateStrategy = mock(InitializrMetadataUpdateStrategy.class);
 		given(updateStrategy.update(metadata)).willReturn(updatedMetadata);
-		DefaultInitializrMetadataProvider provider = new DefaultInitializrMetadataProvider(metadata, updateStrategy);
+		DefaultInitializrMetadataProvider provider = new DefaultInitializrMetadataProvider(
+				new ConcurrentMapCache("test"), metadata, updateStrategy);
 		assertThat(provider.get()).isEqualTo(updatedMetadata);
 		verify(updateStrategy).update(metadata);
+	}
+
+	@Test
+	void strategyIsNotInvokedOnCacheHit() {
+		InitializrMetadata metadata = mock(InitializrMetadata.class);
+		InitializrMetadata updatedMetadata = mock(InitializrMetadata.class);
+		InitializrMetadataUpdateStrategy updateStrategy = mock(InitializrMetadataUpdateStrategy.class);
+		given(updateStrategy.update(metadata)).willReturn(updatedMetadata);
+		ConcurrentMapCache cache = new ConcurrentMapCache("test");
+		cache.put("metadata", metadata);
+		DefaultInitializrMetadataProvider provider = new DefaultInitializrMetadataProvider(cache, metadata,
+				updateStrategy);
+		assertThat(provider.get()).isEqualTo(metadata);
+		verifyNoInteractions(updateStrategy);
 	}
 
 }

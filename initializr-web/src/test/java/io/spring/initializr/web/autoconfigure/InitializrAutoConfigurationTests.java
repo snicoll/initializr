@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -36,6 +37,7 @@ import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -52,10 +54,11 @@ import static org.mockito.Mockito.mock;
  */
 class InitializrAutoConfigurationTests {
 
-	private static final AutoConfigurations BASIC_AUTO_CONFIGURATIONS = AutoConfigurations
-			.of(RestTemplateAutoConfiguration.class, JacksonAutoConfiguration.class, InitializrAutoConfiguration.class);
+	private static final AutoConfigurations BASIC_AUTO_CONFIGURATIONS = AutoConfigurations.of(
+			RestTemplateAutoConfiguration.class, JacksonAutoConfiguration.class, CacheAutoConfiguration.class,
+			InitializrAutoConfiguration.class);
 
-	private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(BASIC_AUTO_CONFIGURATIONS);
 
 	@Test
@@ -86,8 +89,9 @@ class InitializrAutoConfigurationTests {
 	}
 
 	@Test
-	void autoConfigRegistersInitializrMetadataProvider() {
-		this.contextRunner.run((context) -> assertThat(context).hasSingleBean(InitializrMetadataProvider.class));
+	void autoConfigWithCachingEnabledRegistersInitializrMetadataProvider() {
+		this.contextRunner.withUserConfiguration(TestCachingConfiguration.class)
+				.run((context) -> assertThat(context).hasSingleBean(InitializrMetadataProvider.class));
 	}
 
 	@Test
@@ -124,7 +128,7 @@ class InitializrAutoConfigurationTests {
 	@Test
 	void webConfiguration() {
 		WebApplicationContextRunner webContextRunner = new WebApplicationContextRunner()
-				.withConfiguration(BASIC_AUTO_CONFIGURATIONS);
+				.withUserConfiguration(TestCachingConfiguration.class).withConfiguration(BASIC_AUTO_CONFIGURATIONS);
 		webContextRunner.run((context) -> {
 			assertThat(context).hasSingleBean(InitializrWebConfig.class);
 			assertThat(context).hasSingleBean(ProjectGenerationController.class);
@@ -137,7 +141,8 @@ class InitializrAutoConfigurationTests {
 	@Test
 	void autoConfigWithCustomProjectGenerationController() {
 		new WebApplicationContextRunner().withConfiguration(BASIC_AUTO_CONFIGURATIONS)
-				.withUserConfiguration(CustomProjectGenerationController.class).run((context) -> {
+				.withUserConfiguration(TestCachingConfiguration.class, CustomProjectGenerationController.class)
+				.run((context) -> {
 					assertThat(context).hasSingleBean(ProjectGenerationController.class);
 					assertThat(context.getBean(ProjectGenerationController.class))
 							.isSameAs(context.getBean("testProjectGenerationController"));
@@ -176,6 +181,12 @@ class InitializrAutoConfigurationTests {
 		RestTemplateCustomizer testRestTemplateCustomizer() {
 			return (b) -> b.setErrorHandler(errorHandler);
 		}
+
+	}
+
+	@Configuration
+	@EnableCaching
+	static class TestCachingConfiguration {
 
 	}
 

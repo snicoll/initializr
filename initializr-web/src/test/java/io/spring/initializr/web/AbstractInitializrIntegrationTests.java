@@ -35,9 +35,12 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.initializr.generator.test.project.ProjectStructure;
+import io.spring.initializr.metadata.InitializrMetadata;
+import io.spring.initializr.metadata.InitializrMetadataBuilder;
+import io.spring.initializr.metadata.InitializrMetadataProvider;
+import io.spring.initializr.metadata.InitializrProperties;
 import io.spring.initializr.web.AbstractInitializrIntegrationTests.Config;
 import io.spring.initializr.web.mapper.InitializrMetadataVersion;
-import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -368,8 +371,9 @@ public abstract class AbstractInitializrIntegrationTests {
 
 		// Disable metadata fetching from spring.io
 		@Bean
-		public InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy() {
-			return (metadata) -> metadata;
+		public InitializrMetadataProvider initializrMetadataProvider(InitializrProperties properties) {
+			InitializrMetadata metadata = InitializrMetadataBuilder.fromInitializrProperties(properties).build();
+			return () -> metadata;
 		}
 
 	}
