@@ -46,8 +46,7 @@ public class ProjectGenerator {
 	 * is refreshed
 	 * @param contextFactory the factory to use to create {@link ProjectGenerationContext}
 	 * instances
-	 * @deprecated as of 0.10.0 use
-	 * {@link #generate(ProjectGenerationContextFactory, ProjectAssetGenerator)} instead.
+	 * @deprecated as of 0.10.0 use {@link #generate(Supplier, ProjectAssetGenerator)}
 	 * @see ProjectGenerationContextFactory
 	 */
 	@Deprecated
@@ -65,8 +64,7 @@ public class ProjectGenerator {
 	 * contributors and the {@link ProjectDescription} have been registered but before it
 	 * is refreshed
 	 * @see GenericApplicationContext#setAllowBeanDefinitionOverriding(boolean)
-	 * @deprecated as of 0.10.0 use
-	 * {@link #generate(ProjectGenerationContextFactory, ProjectAssetGenerator)} instead.
+	 * @deprecated as of 0.10.0 use {@link #generate(Supplier, ProjectAssetGenerator)}
 	 */
 	@Deprecated
 	public ProjectGenerator(Consumer<ProjectGenerationContext> contextConsumer) {
@@ -116,9 +114,9 @@ public class ProjectGenerator {
 				.withContextCustomizer(this.contextConsumer), projectAssetGenerator);
 	}
 
-	public <T> T generate(ProjectGenerationContextFactory projectGenerationContextFactory,
+	public <T> T generate(Supplier<ProjectGenerationContext> contextProvider,
 			ProjectAssetGenerator<T> projectAssetGenerator) {
-		try (ProjectGenerationContext context = projectGenerationContextFactory.get()) {
+		try (ProjectGenerationContext context = contextProvider.get()) {
 			context.refresh();
 			try {
 				return projectAssetGenerator.generate(context);
