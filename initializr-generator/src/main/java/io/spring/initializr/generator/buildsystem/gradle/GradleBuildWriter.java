@@ -52,6 +52,12 @@ import io.spring.initializr.generator.version.VersionProperty;
 public abstract class GradleBuildWriter {
 
 	/**
+	 * Dependency types that are mapped to a jar.
+	 */
+	private static final List<String> JAR_DEPENDENCY_TYPES = Arrays.asList("test-jar", "maven-plugin", "ejb",
+			"ejb-client", "java-source", "javadoc");
+
+	/**
 	 * Write a {@linkplain GradleBuild build.gradle} using the specified
 	 * {@linkplain IndentingWriter writer}.
 	 * @param writer the writer to use
@@ -136,6 +142,14 @@ public abstract class GradleBuildWriter {
 			writer.indented(() -> sortedDependencies.forEach((dependency) -> writeDependency(writer, dependency)));
 			writer.println("}");
 		}
+	}
+
+	protected String determineDependencyType(Dependency dependency) {
+		String type = dependency.getType();
+		if (type != null && JAR_DEPENDENCY_TYPES.contains(type)) {
+			return null;
+		}
+		return type;
 	}
 
 	private Predicate<DependencyScope> hasScope(DependencyScope... validScopes) {

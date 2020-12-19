@@ -417,6 +417,15 @@ class GroovyDslGradleBuildWriterTests {
 	}
 
 	@Test
+	void gradleBuildWithMavenSpecialJarTypeDependency() {
+		GradleBuild build = new GradleBuild();
+		build.dependencies().add("root", Dependency.withCoordinates("com.example", "acme")
+				.scope(DependencyScope.TEST_COMPILE).classifier("tests").type("test-jar"));
+		List<String> lines = generateBuild(build);
+		assertThat(lines).containsSequence("dependencies {", "    testImplementation 'com.example:acme:tests'", "}");
+	}
+
+	@Test
 	void gradleBuildWithOrderedDependencies() {
 		GradleBuild build = new GradleBuild();
 		build.dependencies().add("beta", Dependency.withCoordinates("com.example", "beta"));

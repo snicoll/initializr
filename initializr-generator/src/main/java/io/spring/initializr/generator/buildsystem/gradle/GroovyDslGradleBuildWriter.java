@@ -135,7 +135,7 @@ public class GroovyDslGradleBuildWriter extends GradleBuildWriter {
 		String quoteStyle = determineQuoteStyle(dependency.getVersion());
 		String version = determineVersion(dependency.getVersion());
 		String classifier = dependency.getClassifier();
-		String type = dependency.getType();
+		String type = determineDependencyType(dependency);
 		boolean hasExclusions = !dependency.getExclusions().isEmpty();
 		writer.print(configurationForDependency(dependency));
 		writer.print((hasExclusions) ? "(" : " ");

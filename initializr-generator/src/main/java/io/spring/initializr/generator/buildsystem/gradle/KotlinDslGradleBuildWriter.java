@@ -155,7 +155,7 @@ public class KotlinDslGradleBuildWriter extends GradleBuildWriter {
 	protected void writeDependency(IndentingWriter writer, Dependency dependency) {
 		String version = determineVersion(dependency.getVersion());
 		String classifier = dependency.getClassifier();
-		String type = dependency.getType();
+		String type = determineDependencyType(dependency);
 		writer.print(configurationForDependency(dependency) + "(\"" + dependency.getGroupId() + ":"
 				+ dependency.getArtifactId() + ((version != null) ? ":" + version : "")
 				+ ((classifier != null) ? ":" + classifier : "") + ((type != null) ? "@" + type : "") + "\")");

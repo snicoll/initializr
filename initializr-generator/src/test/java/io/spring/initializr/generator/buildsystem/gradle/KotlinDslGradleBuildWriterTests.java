@@ -397,6 +397,15 @@ class KotlinDslGradleBuildWriterTests {
 	}
 
 	@Test
+	void gradleBuildWithSpecialJarTypeDependency() {
+		GradleBuild build = new GradleBuild();
+		build.dependencies().add("root", Dependency.withCoordinates("com.example", "acme")
+				.scope(DependencyScope.TEST_COMPILE).classifier("tests").type("test-jar"));
+		List<String> lines = generateBuild(build);
+		assertThat(lines).containsSequence("dependencies {", "    testImplementation(\"com.example:acme:tests\")", "}");
+	}
+
+	@Test
 	void gradleBuildWithExclusions() {
 		GradleBuild build = new GradleBuild();
 		build.dependencies().add("test",
